@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Facturas | FacturaPro</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 18px 30px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 24px;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            background: #374151;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+
+            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        }
+
+        .top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .btn-nueva {
+            background: #16a34a;
+            color: white;
+            text-decoration: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+
+        th {
+            background: #f3f4f6;
+        }
+
+        .numero {
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .total {
+            font-weight: bold;
+        }
+
+        .btn-ver {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .vacio {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>
+        FacturaPro | Facturas
+    </h1>
+
+    <a href="{{ url_for('inicio') }}">
+        ← Volver al panel
+    </a>
+
+</header>
+
+
+<div class="container">
+
+
+    <div class="card">
+
+
+        <div class="top">
+
+            <h2>
+                Facturas registradas
+            </h2>
+
+            <a
+                href="{{ url_for('nueva_factura') }}"
+                class="btn-nueva"
+            >
+                + Nueva factura
+            </a>
+
+        </div>
+
+
+        {% if facturas %}
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Número
+                        </th>
+
+                        <th>
+                            Fecha
+                        </th>
+
+                        <th>
+                            Cliente
+                        </th>
+
+                        <th>
+                            Subtotal
+                        </th>
+
+                        <th>
+                            ITBIS
+                        </th>
+
+                        <th>
+                            Total
+                        </th>
+
+                        <th>
+                            Acción
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for factura in facturas %}
+
+                    <tr>
+
+                        <td class="numero">
+                            {{ factura.numero }}
+                        </td>
+
+                        <td>
+                            {{ factura.fecha.strftime('%d/%m/%Y %H:%M') }}
+                        </td>
+
+                        <td>
+
+                            {% if factura.cliente %}
+
+                                {{ factura.cliente.nombre }}
+
+                            {% else %}
+
+                                Consumidor final
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            ${{ "%.2f"|format(factura.subtotal) }}
+                        </td>
+
+                        <td>
+                            ${{ "%.2f"|format(factura.itbis) }}
+                        </td>
+
+                        <td class="total">
+                            ${{ "%.2f"|format(factura.total) }}
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="{{ url_for('ver_factura', id=factura.id) }}"
+                                class="btn-ver"
+                            >
+                                👁️ Ver factura
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <div class="vacio">
+
+            <h3>
+                No hay facturas registradas todavía.
+            </h3>
+
+            <p style="margin-top:10px;">
+                Crea tu primera factura para verla aquí.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

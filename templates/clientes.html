@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes | FacturaPro</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .panel-btn {
+            background: white;
+            color: #111827;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.08);
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        form {
+            display: grid;
+            gap: 12px;
+        }
+
+        input {
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        button {
+            padding: 11px 16px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-add {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #dc2626;
+            color: white;
+        }
+
+        .search {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 13px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f1f5f9;
+        }
+
+        .mensaje {
+            padding: 12px;
+            border-radius: 8px;
+            background: #dcfce7;
+            color: #166534;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            table {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <h1>👥 Clientes</h1>
+
+    <a href="{{ url_for('inicio') }}" class="panel-btn">
+        🏠 Volver al panel
+    </a>
+</header>
+
+<div class="container">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="mensaje">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <h2>➕ Agregar cliente</h2>
+
+        <form action="{{ url_for('agregar_cliente') }}" method="POST">
+            <input type="text" name="nombre" placeholder="Nombre del cliente" required>
+            <input type="text" name="telefono" placeholder="Teléfono">
+            <input type="email" name="correo" placeholder="Correo electrónico">
+            <input type="text" name="direccion" placeholder="Dirección">
+
+            <button type="submit" class="btn-add">
+                Agregar cliente
+            </button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>📋 Clientes registrados</h2>
+
+        <input
+            type="text"
+            id="buscar"
+            class="search"
+            placeholder="🔎 Buscar cliente por nombre..."
+            onkeyup="buscarCliente()"
+        >
+
+        <table id="tablaClientes">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Correo</th>
+                    <th>Dirección</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for cliente in clientes %}
+                <tr>
+                    <td>{{ cliente.id }}</td>
+                    <td>{{ cliente.nombre }}</td>
+                    <td>{{ cliente.telefono or '-' }}</td>
+                    <td>{{ cliente.correo or '-' }}</td>
+                    <td>{{ cliente.direccion or '-' }}</td>
+                    <td>
+                        <form
+                            action="{{ url_for('eliminar_cliente', id=cliente.id) }}"
+                            method="POST"
+                            onsubmit="return confirm('¿Eliminar este cliente?');"
+                        >
+                            <button type="submit" class="btn-delete">
+                                Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6">
+                        No hay clientes registrados.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<script>
+function buscarCliente() {
+    const texto = document.getElementById("buscar").value.toLowerCase();
+    const filas = document.querySelectorAll("#tablaClientes tbody tr");
+
+    filas.forEach(fila => {
+        const nombre = fila.children[1]?.textContent.toLowerCase() || "";
+
+        fila.style.display =
+            nombre.includes(texto) ? "" : "none";
+    });
+}
+</script>
+
+</body>
+</html>

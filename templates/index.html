@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FacturaPro | Panel</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 20px 30px;
+        }
+
+        header h1 {
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: #cbd5e1;
+        }
+
+        nav {
+            background: white;
+            padding: 15px 30px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #111827;
+            margin-right: 25px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #2563eb;
+        }
+
+        .contenedor {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .bienvenida {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .bienvenida h2 {
+            margin-bottom: 10px;
+        }
+
+        .tarjetas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .tarjeta {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .tarjeta h3 {
+            margin-bottom: 10px;
+        }
+
+        .numero {
+            font-size: 35px;
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 15px;
+        }
+
+        .boton {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        .boton:hover {
+            background: #1d4ed8;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>FacturaPro</h1>
+    <p>Gestión comercial y facturación</p>
+</header>
+
+<nav>
+    <a href="{{ url_for('inicio') }}">🏠 Inicio</a>
+    <a href="{{ url_for('nueva_factura') }}">🧾 Nueva factura</a>
+    <a href="{{ url_for('facturas') }}">📄 Facturas</a>
+    <a href="{{ url_for('clientes') }}">👥 Clientes</a>
+    <a href="{{ url_for('productos') }}">📦 Productos</a>
+    <a href="{{ url_for('reportes') }}">📊 Reportes</a>
+    <a href="{{ url_for('configuracion') }}">⚙️ Configuración</a>
+</nav>
+
+<div class="contenedor">
+
+    <div class="bienvenida">
+        <h2>Panel de control</h2>
+        <p>Bienvenido a FacturaPro. Desde aquí puedes administrar tu negocio.</p>
+    </div>
+
+    <div class="tarjetas">
+
+        <div class="tarjeta">
+            <h3>📄 Facturas</h3>
+
+            <div class="numero">
+                {{ facturas|length if facturas is defined else 0 }}
+            </div>
+
+            <p>Consulta las facturas registradas.</p>
+
+            <a href="{{ url_for('facturas') }}" class="boton">
+                Ver facturas →
+            </a>
+        </div>
+
+        <div class="tarjeta">
+            <h3>👥 Clientes</h3>
+
+            <div class="numero">
+                {{ clientes|length }}
+            </div>
+
+            <p>Administra tus clientes.</p>
+
+            <a href="{{ url_for('clientes') }}" class="boton">
+                Ver clientes →
+            </a>
+        </div>
+
+        <div class="tarjeta">
+            <h3>📦 Productos</h3>
+
+            <div class="numero">
+                {{ productos|length }}
+            </div>
+
+            <p>Administra tus productos y stock.</p>
+
+            <a href="{{ url_for('productos') }}" class="boton">
+                Ver productos →
+            </a>
+        </div>
+
+        <div class="tarjeta">
+            <h3>🧾 Nueva factura</h3>
+
+            <p>Crea una nueva factura para un cliente.</p>
+
+            <a href="{{ url_for('nueva_factura') }}" class="boton">
+                Crear factura →
+            </a>
+        </div>
+
+        <div class="tarjeta">
+            <h3>📊 Reportes</h3>
+
+            <p>Consulta información general del sistema.</p>
+
+            <a href="{{ url_for('reportes') }}" class="boton">
+                Ver reportes →
+            </a>
+        </div>
+
+        <div class="tarjeta">
+            <h3>⚙️ Configuración</h3>
+
+            <p>Administra las opciones del sistema.</p>
+
+            <a href="{{ url_for('configuracion') }}" class="boton">
+                Configuración →
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+    FacturaPro © 2026 | Sistema de facturación
+</footer>
+
+</body>
+</html>
