@@ -58,7 +58,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 15px;
             margin-bottom: 25px;
+            flex-wrap: wrap;
         }
 
         .btn-nueva {
@@ -88,6 +90,7 @@
 
         th {
             background: #f3f4f6;
+            white-space: nowrap;
         }
 
         .numero {
@@ -118,7 +121,12 @@
             white-space: nowrap;
         }
 
-        .btn-eliminar {
+        .form-anular {
+            display: inline;
+            margin: 0;
+        }
+
+        .btn-anular {
             display: inline-block;
             background: #dc2626;
             color: white;
@@ -131,13 +139,44 @@
             white-space: nowrap;
         }
 
-        .btn-eliminar:hover {
+        .btn-anular:hover {
             background: #b91c1c;
         }
 
-        .form-eliminar {
-            display: inline;
-            margin: 0;
+        .estado {
+            display: inline-block;
+            padding: 6px 9px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .estado-activa {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .estado-anulada {
+            color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .mensaje {
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .mensaje.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .mensaje.error {
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         .vacio {
@@ -166,11 +205,6 @@
                 padding: 15px;
             }
 
-            .top {
-                gap: 15px;
-                flex-wrap: wrap;
-            }
-
             th,
             td {
                 padding: 10px;
@@ -183,9 +217,7 @@
 
 <header>
 
-    <h1>
-        FacturaPro | Facturas
-    </h1>
+    <h1>FacturaPro | Facturas</h1>
 
     <a href="{{ url_for('inicio') }}">
         ← Volver al panel
@@ -199,9 +231,7 @@
 
         <div class="top">
 
-            <h2>
-                Facturas registradas
-            </h2>
+            <h2>Facturas registradas</h2>
 
             <a
                 href="{{ url_for('nueva_factura') }}"
@@ -211,6 +241,15 @@
             </a>
 
         </div>
+
+        <!-- MENSAJES DEL SISTEMA -->
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% for categoria, mensaje in mensajes %}
+                <div class="mensaje {{ categoria }}">
+                    {{ mensaje }}
+                </div>
+            {% endfor %}
+        {% endwith %}
 
         {% if facturas %}
 
@@ -226,6 +265,7 @@
                         <th>Subtotal</th>
                         <th>ITBIS</th>
                         <th>Total</th>
+                        <th>Estado</th>
                         <th>Acción</th>
                     </tr>
                 </thead>
@@ -264,11 +304,24 @@
                             ${{ "%.2f"|format(factura.total) }}
                         </td>
 
+                        <!-- ESTADO DE LA FACTURA -->
+                        <td>
+                            {% if factura.estado == "anulada" %}
+                                <span class="estado estado-anulada">
+                                    Anulada
+                                </span>
+                            {% else %}
+                                <span class="estado estado-activa">
+                                    Activa
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- ACCIONES -->
                         <td>
 
                             <div class="acciones">
 
-                                <!-- VER FACTURA -->
                                 <a
                                     href="{{ url_for('ver_factura', id=factura.id) }}"
                                     class="btn-ver"
@@ -276,22 +329,25 @@
                                     👁️ Ver factura
                                 </a>
 
-                                <!-- ELIMINAR FACTURA -->
+                                {% if factura.estado != "anulada" %}
+
                                 <form
                                     method="POST"
-                                    action="{{ url_for('eliminar_factura', id=factura.id) }}"
-                                    class="form-eliminar"
-                                    onsubmit="return confirm('¿Estás seguro de que deseas eliminar la factura {{ factura.numero }}? Esta acción no se puede deshacer.');"
+                                    action="{{ url_for('anular_factura', id=factura.id) }}"
+                                    class="form-anular"
+                                    onsubmit="return confirm('¿Seguro que deseas anular esta factura? Se devolverán los productos al inventario.');"
                                 >
 
                                     <button
                                         type="submit"
-                                        class="btn-eliminar"
+                                        class="btn-anular"
                                     >
-                                        🗑️ Eliminar
+                                        🚫 Anular
                                     </button>
 
                                 </form>
+
+                                {% endif %}
 
                             </div>
 
