@@ -1,4 +1,3 @@
-
 from flask import (
     Flask,
     render_template,
@@ -1001,6 +1000,50 @@ def facturas():
         "facturas.html",
         facturas=facturas_lista
     )
+
+
+# ============================================================
+# ELIMINAR FACTURA
+# ============================================================
+
+@app.route("/factura/eliminar/<int:id>", methods=["POST"])
+def eliminar_factura(id):
+    """Elimina una factura y sus detalles, devolviendo sus cantidades al stock."""
+
+    factura = db.session.get(Factura, id)
+
+    if not factura:
+        flash("La factura no existe.", "error")
+        return redirect(url_for("facturas"))
+
+    try:
+        numero_factura = factura.numero
+
+        # Restaurar al inventario las cantidades vendidas en esta factura.
+        for detalle in factura.detalles:
+            producto = detalle.producto
+            if producto is not None:
+                producto.stock = (producto.stock or 0) + detalle.cantidad
+
+        # La relación DetalleFactura usa cascade="all, delete-orphan".
+        # Al borrar la factura, SQLAlchemy elimina también sus detalles.
+        db.session.delete(factura)
+        db.session.commit()
+
+        flash(
+            f"La factura {numero_factura} fue eliminada correctamente y el inventario fue actualizado.",
+            "success"
+        )
+
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Error al eliminar factura")
+        flash(
+            "No se pudo eliminar la factura. No se guardaron cambios.",
+            "error"
+        )
+
+    return redirect(url_for("facturas"))
 
 
 # ============================================================
