@@ -8,7 +8,6 @@
     <title>Facturas | FacturaPro</title>
 
     <style>
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -25,7 +24,6 @@
             background: #111827;
             color: white;
             padding: 18px 30px;
-
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -53,8 +51,7 @@
             background: white;
             border-radius: 12px;
             padding: 25px;
-
-            box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
         }
 
         .top {
@@ -102,6 +99,13 @@
             font-weight: bold;
         }
 
+        .acciones {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
         .btn-ver {
             display: inline-block;
             background: #2563eb;
@@ -111,6 +115,29 @@
             border-radius: 7px;
             font-size: 14px;
             font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .btn-eliminar {
+            display: inline-block;
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-eliminar:hover {
+            background: #b91c1c;
+        }
+
+        .form-eliminar {
+            display: inline;
+            margin: 0;
         }
 
         .vacio {
@@ -119,13 +146,40 @@
             color: #6b7280;
         }
 
-    </style>
+        @media (max-width: 600px) {
+            header {
+                padding: 16px;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
 
+            header h1 {
+                font-size: 20px;
+            }
+
+            .container {
+                margin: 20px auto;
+                padding: 0 10px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .top {
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+
+            th,
+            td {
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 
-
 <body>
-
 
 <header>
 
@@ -139,12 +193,9 @@
 
 </header>
 
-
 <div class="container">
 
-
     <div class="card">
-
 
         <div class="top">
 
@@ -161,7 +212,6 @@
 
         </div>
 
-
         {% if facturas %}
 
         <div class="table-container">
@@ -169,41 +219,16 @@
             <table>
 
                 <thead>
-
                     <tr>
-
-                        <th>
-                            Número
-                        </th>
-
-                        <th>
-                            Fecha
-                        </th>
-
-                        <th>
-                            Cliente
-                        </th>
-
-                        <th>
-                            Subtotal
-                        </th>
-
-                        <th>
-                            ITBIS
-                        </th>
-
-                        <th>
-                            Total
-                        </th>
-
-                        <th>
-                            Acción
-                        </th>
-
+                        <th>Número</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Subtotal</th>
+                        <th>ITBIS</th>
+                        <th>Total</th>
+                        <th>Acción</th>
                     </tr>
-
                 </thead>
-
 
                 <tbody>
 
@@ -220,17 +245,11 @@
                         </td>
 
                         <td>
-
                             {% if factura.cliente %}
-
                                 {{ factura.cliente.nombre }}
-
                             {% else %}
-
                                 Consumidor final
-
                             {% endif %}
-
                         </td>
 
                         <td>
@@ -247,12 +266,34 @@
 
                         <td>
 
-                            <a
-                                href="{{ url_for('ver_factura', id=factura.id) }}"
-                                class="btn-ver"
-                            >
-                                👁️ Ver factura
-                            </a>
+                            <div class="acciones">
+
+                                <!-- VER FACTURA -->
+                                <a
+                                    href="{{ url_for('ver_factura', id=factura.id) }}"
+                                    class="btn-ver"
+                                >
+                                    👁️ Ver factura
+                                </a>
+
+                                <!-- ELIMINAR FACTURA -->
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('eliminar_factura', id=factura.id) }}"
+                                    class="form-eliminar"
+                                    onsubmit="return confirm('¿Estás seguro de que deseas eliminar la factura {{ factura.numero }}? Esta acción no se puede deshacer.');"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="btn-eliminar"
+                                    >
+                                        🗑️ Eliminar
+                                    </button>
+
+                                </form>
+
+                            </div>
 
                         </td>
 
@@ -266,7 +307,6 @@
 
         </div>
 
-
         {% else %}
 
         <div class="vacio">
@@ -275,7 +315,7 @@
                 No hay facturas registradas todavía.
             </h3>
 
-            <p style="margin-top:10px;">
+            <p style="margin-top: 10px;">
                 Crea tu primera factura para verla aquí.
             </p>
 
@@ -283,13 +323,9 @@
 
         {% endif %}
 
-
     </div>
-
 
 </div>
 
-
 </body>
-
 </html>
