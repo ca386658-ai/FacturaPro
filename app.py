@@ -6,12 +6,11 @@ from flask import (
     redirect,
     url_for,
     flash,
-    session
+    session,
 )
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from decimal import Decimal
-from urllib.parse import urlsplit
 import json
 import os
 
@@ -21,14 +20,9 @@ app = Flask(__name__)
 # CONFIGURACIÓN SEGURA
 # ============================================================
 
-app.secret_key = os.getenv(
-    "SECRET_KEY",
-    "facturapro_clave_2026"
-)
-
+app.secret_key = os.getenv("SECRET_KEY", "facturapro_clave_2026")
 app.config["SESSION_COOKIE_HTTPONLY"] = True
 app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-
 
 # ============================================================
 # INICIO DE SESIÓN
@@ -36,17 +30,14 @@ app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
     if session.get("logged_in"):
         return redirect(url_for("inicio"))
 
     destino = request.args.get("next", "/")
 
     if request.method == "POST":
-
         password = request.form.get("password", "")
         app_password = os.getenv("APP_PASSWORD", "")
-
         destino = request.form.get("next", "/")
 
         # Evitar redirecciones a páginas externas.
@@ -58,180 +49,71 @@ def login():
             destino = "/"
 
         if not app_password:
-            flash(
-                "Falta configurar APP_PASSWORD en Render.",
-                "error"
-            )
-
+            flash("Falta configurar APP_PASSWORD en Render.", "error")
         elif password == app_password:
             session.clear()
             session["logged_in"] = True
-
             return redirect(destino)
-
         else:
-            flash(
-                "Contraseña incorrecta. Inténtalo de nuevo.",
-                "error"
-            )
+            flash("Contraseña incorrecta. Inténtalo de nuevo.", "error")
 
     return render_template_string("""
     <!DOCTYPE html>
     <html lang="es">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport"
-              content="width=device-width, initial-scale=1.0">
-
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Acceso | FacturaPro</title>
-
         <style>
-            * {
-                box-sizing: border-box;
-            }
-
+            * { box-sizing: border-box; }
             body {
-                margin: 0;
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 20px;
-                background: #10141d;
-                color: #ffffff;
-                font-family: Arial, sans-serif;
+                margin: 0; min-height: 100vh; display: flex;
+                align-items: center; justify-content: center; padding: 20px;
+                background: #10141d; color: #fff; font-family: Arial, sans-serif;
             }
-
             .login-box {
-                width: 100%;
-                max-width: 390px;
-                padding: 35px;
-                background: #1b2230;
-                border: 1px solid #30394b;
-                border-radius: 16px;
-                box-shadow: 0 15px 45px rgba(0,0,0,0.3);
+                width: 100%; max-width: 390px; padding: 35px;
+                background: #1b2230; border: 1px solid #30394b;
+                border-radius: 16px; box-shadow: 0 15px 45px rgba(0,0,0,.3);
             }
-
-            .logo {
-                text-align: center;
-                font-size: 32px;
-                font-weight: bold;
-                margin-bottom: 10px;
-            }
-
-            .logo span {
-                color: #ef4444;
-            }
-
-            .subtitle {
-                color: #aab4c5;
-                text-align: center;
-                margin-bottom: 30px;
-            }
-
-            label {
-                display: block;
-                margin-bottom: 9px;
-                font-size: 14px;
-            }
-
+            .logo { text-align: center; font-size: 32px; font-weight: bold; margin-bottom: 10px; }
+            .logo span { color: #ef4444; }
+            .subtitle { color: #aab4c5; text-align: center; margin-bottom: 30px; }
+            label { display: block; margin-bottom: 9px; font-size: 14px; }
             input {
-                width: 100%;
-                padding: 13px;
-                border: 1px solid #3b465b;
-                border-radius: 8px;
-                background: #10141d;
-                color: white;
-                outline: none;
-                font-size: 16px;
-                margin-bottom: 20px;
+                width: 100%; padding: 13px; border: 1px solid #3b465b;
+                border-radius: 8px; background: #10141d; color: white;
+                outline: none; font-size: 16px; margin-bottom: 20px;
             }
-
-            input:focus {
-                border-color: #3b82f6;
-            }
-
+            input:focus { border-color: #3b82f6; }
             button {
-                width: 100%;
-                padding: 14px;
-                border: none;
-                border-radius: 8px;
-                background: #2563eb;
-                color: white;
-                font-size: 16px;
-                font-weight: bold;
-                cursor: pointer;
+                width: 100%; padding: 14px; border: none; border-radius: 8px;
+                background: #2563eb; color: white; font-size: 16px;
+                font-weight: bold; cursor: pointer;
             }
-
-            button:hover {
-                background: #1d4ed8;
-            }
-
+            button:hover { background: #1d4ed8; }
             .mensaje {
-                padding: 12px;
-                margin-bottom: 18px;
-                border-radius: 8px;
-                background: #49232a;
-                color: #fecaca;
-                font-size: 14px;
+                padding: 12px; margin-bottom: 18px; border-radius: 8px;
+                background: #49232a; color: #fecaca; font-size: 14px;
             }
-
-            .pie {
-                margin-top: 25px;
-                color: #8490a4;
-                text-align: center;
-                font-size: 12px;
-            }
+            .pie { margin-top: 25px; color: #8490a4; text-align: center; font-size: 12px; }
         </style>
     </head>
-
     <body>
         <div class="login-box">
-
-            <div class="logo">
-                Factura<span>Pro</span>
-            </div>
-
-            <p class="subtitle">
-                Ingresa tu contraseña para continuar
-            </p>
-
-            {% for categoria, mensaje in
-                get_flashed_messages(with_categories=true) %}
-                <div class="mensaje">
-                    {{ mensaje }}
-                </div>
+            <div class="logo">Factura<span>Pro</span></div>
+            <p class="subtitle">Ingresa tu contraseña para continuar</p>
+            {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+                <div class="mensaje">{{ mensaje }}</div>
             {% endfor %}
-
             <form method="POST" action="{{ url_for('login') }}">
-
-                <input
-                    type="hidden"
-                    name="next"
-                    value="{{ destino }}"
-                >
-
+                <input type="hidden" name="next" value="{{ destino }}">
                 <label for="password">Contraseña de acceso</label>
-
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Escribe tu contraseña"
-                    required
-                    autofocus
-                >
-
-                <button type="submit">
-                    Entrar a FacturaPro
-                </button>
-
+                <input type="password" id="password" name="password"
+                       placeholder="Escribe tu contraseña" required autofocus>
+                <button type="submit">Entrar a FacturaPro</button>
             </form>
-
-            <div class="pie">
-                FacturaPro · Sistema de facturación
-            </div>
-
+            <div class="pie">FacturaPro · Sistema de facturación</div>
         </div>
     </body>
     </html>
@@ -240,24 +122,16 @@ def login():
 
 @app.route("/logout")
 def logout():
-
     session.clear()
-
     return redirect(url_for("login"))
 
 
 @app.before_request
 def proteger_facturapro():
-
-    # Estas páginas deben funcionar sin iniciar sesión.
     if request.endpoint in ("login", "static"):
         return None
-
-    # Todo lo demás requiere iniciar sesión.
     if not session.get("logged_in"):
-        return redirect(
-            url_for("login", next=request.path)
-        )
+        return redirect(url_for("login", next=request.path))
 
 
 # ============================================================
@@ -265,7 +139,6 @@ def proteger_facturapro():
 # ============================================================
 
 database_url = os.getenv("DATABASE_URL")
-
 if not database_url:
     database_url = (
         "postgresql+psycopg://postgres:"
@@ -273,24 +146,17 @@ if not database_url:
         + "@localhost:5432/facturapro"
     )
 
-# Compatibilidad con URLs de servicios de nube.
 if database_url.startswith("postgres://"):
     database_url = database_url.replace(
-        "postgres://",
-        "postgresql+psycopg://",
-        1
+        "postgres://", "postgresql+psycopg://", 1
     )
-
 elif database_url.startswith("postgresql://"):
     database_url = database_url.replace(
-        "postgresql://",
-        "postgresql+psycopg://",
-        1
+        "postgresql://", "postgresql+psycopg://", 1
     )
 
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
 db = SQLAlchemy(app)
 
 
@@ -299,30 +165,13 @@ db = SQLAlchemy(app)
 # ============================================================
 
 class Cliente(db.Model):
-
     __tablename__ = "clientes"
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
-
-    nombre = db.Column(
-        db.String(100),
-        nullable=False
-    )
-
-    telefono = db.Column(
-        db.String(30)
-    )
-
-    correo = db.Column(
-        db.String(120)
-    )
-
-    direccion = db.Column(
-        db.String(200)
-    )
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
+    telefono = db.Column(db.String(30))
+    correo = db.Column(db.String(120))
+    direccion = db.Column(db.String(200))
 
 
 # ============================================================
@@ -330,49 +179,16 @@ class Cliente(db.Model):
 # ============================================================
 
 class Producto(db.Model):
-
     __tablename__ = "productos"
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
-
-    codigo = db.Column(
-        db.String(50),
-        unique=True,
-        nullable=False
-    )
-
-    nombre = db.Column(
-        db.String(100),
-        nullable=False
-    )
-
-    categoria = db.Column(
-        db.String(100)
-    )
-
-    precio = db.Column(
-        db.Numeric(10, 2),
-        nullable=False
-    )
-
-    stock = db.Column(
-        db.Integer,
-        default=0
-    )
-
-    itbis = db.Column(
-        db.Numeric(5, 2),
-        default=18.00
-    )
-
-    activo = db.Column(
-        db.Boolean,
-        default=True,
-        nullable=False
-    )
+    id = db.Column(db.Integer, primary_key=True)
+    codigo = db.Column(db.String(50), unique=True, nullable=False)
+    nombre = db.Column(db.String(100), nullable=False)
+    categoria = db.Column(db.String(100))
+    precio = db.Column(db.Numeric(10, 2), nullable=False)
+    stock = db.Column(db.Integer, default=0)
+    itbis = db.Column(db.Numeric(5, 2), default=18.00)
+    activo = db.Column(db.Boolean, default=True, nullable=False)
 
 
 # ============================================================
@@ -380,55 +196,25 @@ class Producto(db.Model):
 # ============================================================
 
 class Factura(db.Model):
-
     __tablename__ = "facturas"
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
+    id = db.Column(db.Integer, primary_key=True)
+    numero = db.Column(db.String(30), unique=True, nullable=False)
+    fecha = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    cliente_id = db.Column(db.Integer, db.ForeignKey("clientes.id"))
+    subtotal = db.Column(db.Numeric(10, 2), default=0)
+    itbis = db.Column(db.Numeric(10, 2), default=0)
+    total = db.Column(db.Numeric(10, 2), default=0)
 
-    numero = db.Column(
-        db.String(30),
-        unique=True,
-        nullable=False
+    # Estado para conservar las facturas anuladas en el historial.
+    estado = db.Column(
+        db.String(20), nullable=False, default="activa", server_default="activa"
     )
+    fecha_anulacion = db.Column(db.DateTime, nullable=True)
 
-    fecha = db.Column(
-        db.DateTime,
-        default=datetime.now,
-        nullable=False
-    )
-
-    cliente_id = db.Column(
-        db.Integer,
-        db.ForeignKey("clientes.id")
-    )
-
-    subtotal = db.Column(
-        db.Numeric(10, 2),
-        default=0
-    )
-
-    itbis = db.Column(
-        db.Numeric(10, 2),
-        default=0
-    )
-
-    total = db.Column(
-        db.Numeric(10, 2),
-        default=0
-    )
-
-    cliente = db.relationship(
-        "Cliente",
-        backref="facturas"
-    )
-
+    cliente = db.relationship("Cliente", backref="facturas")
     detalles = db.relationship(
-        "DetalleFactura",
-        backref="factura",
-        cascade="all, delete-orphan"
+        "DetalleFactura", backref="factura", cascade="all, delete-orphan"
     )
 
 
@@ -437,54 +223,22 @@ class Factura(db.Model):
 # ============================================================
 
 class DetalleFactura(db.Model):
-
     __tablename__ = "detalle_factura"
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
-
+    id = db.Column(db.Integer, primary_key=True)
     factura_id = db.Column(
-        db.Integer,
-        db.ForeignKey("facturas.id"),
-        nullable=False
+        db.Integer, db.ForeignKey("facturas.id"), nullable=False
     )
-
     producto_id = db.Column(
-        db.Integer,
-        db.ForeignKey("productos.id"),
-        nullable=False
+        db.Integer, db.ForeignKey("productos.id"), nullable=False
     )
+    cantidad = db.Column(db.Integer, nullable=False)
+    precio_unitario = db.Column(db.Numeric(10, 2), nullable=False)
+    subtotal = db.Column(db.Numeric(10, 2), nullable=False)
+    itbis = db.Column(db.Numeric(10, 2), nullable=False)
+    total = db.Column(db.Numeric(10, 2), nullable=False)
 
-    cantidad = db.Column(
-        db.Integer,
-        nullable=False
-    )
-
-    precio_unitario = db.Column(
-        db.Numeric(10, 2),
-        nullable=False
-    )
-
-    subtotal = db.Column(
-        db.Numeric(10, 2),
-        nullable=False
-    )
-
-    itbis = db.Column(
-        db.Numeric(10, 2),
-        nullable=False
-    )
-
-    total = db.Column(
-        db.Numeric(10, 2),
-        nullable=False
-    )
-
-    producto = db.relationship(
-        "Producto"
-    )
+    producto = db.relationship("Producto")
 
 
 # ============================================================
@@ -493,20 +247,17 @@ class DetalleFactura(db.Model):
 
 @app.route("/")
 def inicio():
-
-    total_productos = Producto.query.filter_by(
-        activo=True
-    ).count()
-
+    total_productos = Producto.query.filter_by(activo=True).count()
     total_clientes = Cliente.query.count()
-
-    total_facturas = Factura.query.count()
+    total_facturas = Factura.query.filter(
+        Factura.estado != "anulada"
+    ).count()
 
     return render_template(
         "index.html",
         total_productos=total_productos,
         total_clientes=total_clientes,
-        total_facturas=total_facturas
+        total_facturas=total_facturas,
     )
 
 
@@ -516,17 +267,10 @@ def inicio():
 
 @app.route("/productos")
 def productos():
-
-    productos = Producto.query.filter_by(
-        activo=True
-    ).order_by(
+    productos_lista = Producto.query.filter_by(activo=True).order_by(
         Producto.id.desc()
     ).all()
-
-    return render_template(
-        "productos.html",
-        productos=productos
-    )
+    return render_template("productos.html", productos=productos_lista)
 
 
 # ============================================================
@@ -535,81 +279,40 @@ def productos():
 
 @app.route("/productos/agregar", methods=["POST"])
 def agregar_producto():
-
     try:
-
         codigo = request.form.get("codigo", "").strip()
         nombre = request.form.get("nombre", "").strip()
         categoria = request.form.get("categoria", "").strip()
-
-        precio = Decimal(
-            request.form.get("precio", "0")
-        )
-
-        stock = int(
-            request.form.get("stock", "0")
-        )
-
-        itbis = Decimal(
-            request.form.get("itbis", "18")
-        )
+        precio = Decimal(request.form.get("precio", "0"))
+        stock = int(request.form.get("stock", "0"))
+        itbis = Decimal(request.form.get("itbis", "18"))
 
         if not codigo or not nombre:
-            flash(
-                "El código y el nombre son obligatorios.",
-                "error"
-            )
+            flash("El código y el nombre son obligatorios.", "error")
             return redirect(url_for("productos"))
-
         if precio < 0:
-            flash(
-                "El precio no puede ser negativo.",
-                "error"
-            )
+            flash("El precio no puede ser negativo.", "error")
             return redirect(url_for("productos"))
-
         if stock < 0:
-            flash(
-                "El stock no puede ser negativo.",
-                "error"
-            )
+            flash("El stock no puede ser negativo.", "error")
             return redirect(url_for("productos"))
-
         if itbis < 0 or itbis > 100:
-            flash(
-                "El ITBIS debe estar entre 0 y 100.",
-                "error"
-            )
+            flash("El ITBIS debe estar entre 0 y 100.", "error")
             return redirect(url_for("productos"))
 
-        producto_existente = Producto.query.filter_by(
-            codigo=codigo
-        ).first()
-
+        producto_existente = Producto.query.filter_by(codigo=codigo).first()
         if producto_existente:
-
             if not producto_existente.activo:
-
                 producto_existente.nombre = nombre
                 producto_existente.categoria = categoria
                 producto_existente.precio = precio
                 producto_existente.stock = stock
                 producto_existente.itbis = itbis
                 producto_existente.activo = True
-
                 db.session.commit()
-
-                flash(
-                    "El producto fue reactivado correctamente.",
-                    "success"
-                )
-
+                flash("El producto fue reactivado correctamente.", "success")
                 return redirect(url_for("productos"))
-
-            flash(
-                "Ya existe un producto con ese código.",
-                "error"
-            )
+            flash("Ya existe un producto con ese código.", "error")
             return redirect(url_for("productos"))
 
         producto = Producto(
@@ -619,67 +322,39 @@ def agregar_producto():
             precio=precio,
             stock=stock,
             itbis=itbis,
-            activo=True
+            activo=True,
         )
-
         db.session.add(producto)
         db.session.commit()
+        flash("Producto agregado correctamente.", "success")
 
-        flash(
-            "Producto agregado correctamente.",
-            "success"
-        )
-
-    except Exception as error:
-
+    except Exception:
         db.session.rollback()
-
-        print("ERROR AL AGREGAR PRODUCTO:", error)
-
-        flash(
-            "No se pudo agregar el producto.",
-            "error"
-        )
+        app.logger.exception("Error al agregar producto")
+        flash("No se pudo agregar el producto.", "error")
 
     return redirect(url_for("productos"))
 
 
 # ============================================================
-# ELIMINAR PRODUCTO
+# ELIMINAR PRODUCTO (BAJA LÓGICA)
 # ============================================================
 
 @app.route("/productos/eliminar/<int:id>", methods=["POST"])
 def eliminar_producto(id):
-
     producto = db.session.get(Producto, id)
-
     if not producto:
-        flash(
-            "El producto no existe.",
-            "error"
-        )
+        flash("El producto no existe.", "error")
         return redirect(url_for("productos"))
 
     try:
-
         producto.activo = False
         db.session.commit()
-
-        flash(
-            "Producto eliminado correctamente.",
-            "success"
-        )
-
-    except Exception as error:
-
+        flash("Producto eliminado correctamente.", "success")
+    except Exception:
         db.session.rollback()
-
-        print("ERROR AL ELIMINAR PRODUCTO:", error)
-
-        flash(
-            "No se pudo eliminar el producto.",
-            "error"
-        )
+        app.logger.exception("Error al eliminar producto")
+        flash("No se pudo eliminar el producto.", "error")
 
     return redirect(url_for("productos"))
 
@@ -690,27 +365,13 @@ def eliminar_producto(id):
 
 @app.route("/clientes")
 def clientes():
-
     busqueda = request.args.get("buscar", "").strip()
-
+    consulta = Cliente.query
     if busqueda:
-
-        clientes_lista = Cliente.query.filter(
-            Cliente.nombre.ilike(f"%{busqueda}%")
-        ).order_by(
-            Cliente.id.desc()
-        ).all()
-
-    else:
-
-        clientes_lista = Cliente.query.order_by(
-            Cliente.id.desc()
-        ).all()
-
+        consulta = consulta.filter(Cliente.nombre.ilike(f"%{busqueda}%"))
+    clientes_lista = consulta.order_by(Cliente.id.desc()).all()
     return render_template(
-        "clientes.html",
-        clientes=clientes_lista,
-        buscar=busqueda
+        "clientes.html", clientes=clientes_lista, buscar=busqueda
     )
 
 
@@ -720,46 +381,30 @@ def clientes():
 
 @app.route("/clientes/agregar", methods=["POST"])
 def agregar_cliente():
-
     try:
-
         nombre = request.form.get("nombre", "").strip()
         telefono = request.form.get("telefono", "").strip()
         correo = request.form.get("correo", "").strip()
         direccion = request.form.get("direccion", "").strip()
 
         if not nombre:
-            flash(
-                "El nombre del cliente es obligatorio.",
-                "error"
-            )
+            flash("El nombre del cliente es obligatorio.", "error")
             return redirect(url_for("clientes"))
 
         cliente = Cliente(
             nombre=nombre,
             telefono=telefono,
             correo=correo,
-            direccion=direccion
+            direccion=direccion,
         )
-
         db.session.add(cliente)
         db.session.commit()
+        flash("Cliente agregado correctamente.", "success")
 
-        flash(
-            "Cliente agregado correctamente.",
-            "success"
-        )
-
-    except Exception as error:
-
+    except Exception:
         db.session.rollback()
-
-        print("ERROR AL AGREGAR CLIENTE:", error)
-
-        flash(
-            "No se pudo agregar el cliente.",
-            "error"
-        )
+        app.logger.exception("Error al agregar cliente")
+        flash("No se pudo agregar el cliente.", "error")
 
     return redirect(url_for("clientes"))
 
@@ -770,43 +415,26 @@ def agregar_cliente():
 
 @app.route("/clientes/eliminar/<int:id>", methods=["POST"])
 def eliminar_cliente(id):
-
     cliente = db.session.get(Cliente, id)
-
     if not cliente:
-        flash(
-            "El cliente no existe.",
-            "error"
-        )
+        flash("El cliente no existe.", "error")
         return redirect(url_for("clientes"))
 
     try:
-
         if cliente.facturas:
             flash(
                 "Este cliente tiene facturas asociadas y no puede eliminarse.",
-                "error"
+                "error",
             )
             return redirect(url_for("clientes"))
-
         db.session.delete(cliente)
         db.session.commit()
+        flash("Cliente eliminado correctamente.", "success")
 
-        flash(
-            "Cliente eliminado correctamente.",
-            "success"
-        )
-
-    except Exception as error:
-
+    except Exception:
         db.session.rollback()
-
-        print("ERROR AL ELIMINAR CLIENTE:", error)
-
-        flash(
-            "No se pudo eliminar el cliente.",
-            "error"
-        )
+        app.logger.exception("Error al eliminar cliente")
+        flash("No se pudo eliminar el cliente.", "error")
 
     return redirect(url_for("clientes"))
 
@@ -817,23 +445,14 @@ def eliminar_cliente(id):
 
 @app.route("/factura/nueva")
 def nueva_factura():
-
-    clientes_lista = Cliente.query.order_by(
-        Cliente.nombre.asc()
-    ).all()
-
-    productos_lista = Producto.query.filter_by(
-        activo=True
-    ).filter(
+    clientes_lista = Cliente.query.order_by(Cliente.nombre.asc()).all()
+    productos_lista = Producto.query.filter_by(activo=True).filter(
         Producto.stock > 0
-    ).order_by(
-        Producto.nombre.asc()
-    ).all()
-
+    ).order_by(Producto.nombre.asc()).all()
     return render_template(
         "factura_nueva.html",
         clientes=clientes_lista,
-        productos=productos_lista
+        productos=productos_lista,
     )
 
 
@@ -843,89 +462,74 @@ def nueva_factura():
 
 @app.route("/factura/guardar", methods=["POST"])
 def guardar_factura():
-
     try:
-
         cliente_id = request.form.get("cliente_id")
-
         items_json = request.form.get("items", "[]")
         items = json.loads(items_json)
 
-        if not items:
-            flash(
-                "La factura no tiene productos.",
-                "error"
-            )
+        if not isinstance(items, list) or not items:
+            flash("La factura no tiene productos.", "error")
             return redirect(url_for("nueva_factura"))
+
+        if cliente_id:
+            cliente = db.session.get(Cliente, int(cliente_id))
+            if not cliente:
+                raise ValueError("El cliente seleccionado no existe.")
 
         subtotal_general = Decimal("0.00")
         itbis_general = Decimal("0.00")
         total_general = Decimal("0.00")
-
         detalles = []
+        cantidades_por_producto = {}
 
+        # Sumar cantidades si el mismo producto aparece más de una vez.
         for item in items:
-
             producto_id = int(item["producto_id"])
             cantidad = int(item["cantidad"])
-
             if cantidad <= 0:
-                raise ValueError(
-                    "La cantidad debe ser mayor que cero."
-                )
-
-            producto = db.session.get(
-                Producto,
-                producto_id
+                raise ValueError("La cantidad debe ser mayor que cero.")
+            cantidades_por_producto[producto_id] = (
+                cantidades_por_producto.get(producto_id, 0) + cantidad
             )
 
+        # Comprobar existencias usando las cantidades acumuladas.
+        productos_en_factura = {}
+        for producto_id, cantidad_total in cantidades_por_producto.items():
+            producto = db.session.get(Producto, producto_id)
             if not producto:
                 raise ValueError("Producto no encontrado.")
-
             if not producto.activo:
-                raise ValueError(
-                    f"El producto {producto.nombre} está inactivo."
-                )
+                raise ValueError(f"El producto {producto.nombre} está inactivo.")
+            if producto.stock < cantidad_total:
+                raise ValueError(f"No hay suficiente stock de {producto.nombre}.")
+            productos_en_factura[producto_id] = producto
 
-            if producto.stock < cantidad:
-                raise ValueError(
-                    f"No hay suficiente stock de {producto.nombre}."
-                )
-
+        for producto_id, cantidad in cantidades_por_producto.items():
+            producto = productos_en_factura[producto_id]
             precio = Decimal(str(producto.precio))
-
-            tasa_itbis = (
-                Decimal(str(producto.itbis or 18))
-                / Decimal("100")
-            )
-
-            subtotal_linea = precio * cantidad
-            itbis_linea = subtotal_linea * tasa_itbis
+            tasa_itbis = Decimal(str(producto.itbis or 18)) / Decimal("100")
+            subtotal_linea = (precio * cantidad).quantize(Decimal("0.01"))
+            itbis_linea = (subtotal_linea * tasa_itbis).quantize(Decimal("0.01"))
             total_linea = subtotal_linea + itbis_linea
 
             subtotal_general += subtotal_linea
             itbis_general += itbis_linea
             total_general += total_linea
-
             detalles.append({
                 "producto": producto,
                 "cantidad": cantidad,
                 "precio": precio,
                 "subtotal": subtotal_linea,
                 "itbis": itbis_linea,
-                "total": total_linea
+                "total": total_linea,
             })
 
-        ultima_factura = Factura.query.order_by(
-            Factura.id.desc()
-        ).first()
+        subtotal_general = subtotal_general.quantize(Decimal("0.01"))
+        itbis_general = itbis_general.quantize(Decimal("0.01"))
+        total_general = total_general.quantize(Decimal("0.01"))
 
-        numero_siguiente = (
-            ultima_factura.id + 1
-            if ultima_factura
-            else 1
-        )
-
+        ultima_factura = Factura.query.order_by(Factura.id.desc()).first()
+        numero_siguiente = ultima_factura.id + 1 if ultima_factura else 1
         numero = f"FAC-{numero_siguiente:06d}"
 
         factura = Factura(
@@ -933,17 +537,15 @@ def guardar_factura():
             cliente_id=int(cliente_id) if cliente_id else None,
             subtotal=subtotal_general,
             itbis=itbis_general,
-            total=total_general
+            total=total_general,
+            estado="activa",
         )
-
         db.session.add(factura)
         db.session.flush()
 
         for detalle in detalles:
-
             producto = detalle["producto"]
             producto.stock -= detalle["cantidad"]
-
             nuevo_detalle = DetalleFactura(
                 factura_id=factura.id,
                 producto_id=producto.id,
@@ -951,37 +553,22 @@ def guardar_factura():
                 precio_unitario=detalle["precio"],
                 subtotal=detalle["subtotal"],
                 itbis=detalle["itbis"],
-                total=detalle["total"]
+                total=detalle["total"],
             )
-
             db.session.add(nuevo_detalle)
 
         db.session.commit()
+        flash("Factura creada correctamente.", "success")
+        return redirect(url_for("ver_factura", id=factura.id, imprimir=1))
 
-        flash(
-            "Factura creada correctamente.",
-            "success"
-        )
-
-        return redirect(
-            url_for(
-                "ver_factura",
-                id=factura.id,
-                imprimir=1
-            )
-        )
-
-    except Exception as error:
-
+    except (ValueError, TypeError, KeyError, json.JSONDecodeError) as error:
         db.session.rollback()
-
-        print("ERROR AL GUARDAR FACTURA:", error)
-
-        flash(
-            f"No se pudo guardar la factura: {error}",
-            "error"
-        )
-
+        flash(f"No se pudo guardar la factura: {error}", "error")
+        return redirect(url_for("nueva_factura"))
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Error al guardar factura")
+        flash("Ocurrió un error al guardar la factura.", "error")
         return redirect(url_for("nueva_factura"))
 
 
@@ -991,57 +578,54 @@ def guardar_factura():
 
 @app.route("/facturas")
 def facturas():
-
-    facturas_lista = Factura.query.order_by(
-        Factura.id.desc()
-    ).all()
-
-    return render_template(
-        "facturas.html",
-        facturas=facturas_lista
-    )
+    facturas_lista = Factura.query.order_by(Factura.id.desc()).all()
+    return render_template("facturas.html", facturas=facturas_lista)
 
 
 # ============================================================
-# ELIMINAR FACTURA
+# ANULAR FACTURA (CONSERVA EL HISTORIAL)
 # ============================================================
 
-@app.route("/factura/eliminar/<int:id>", methods=["POST"])
-def eliminar_factura(id):
-    """Elimina una factura y sus detalles, devolviendo sus cantidades al stock."""
-
-    factura = db.session.get(Factura, id)
+@app.route("/factura/anular/<int:id>", methods=["POST"])
+def anular_factura(id):
+    # Bloquear la fila durante la anulación para evitar que dos solicitudes
+    # simultáneas devuelvan el inventario dos veces (PostgreSQL).
+    factura = db.session.execute(
+        db.select(Factura)
+        .where(Factura.id == id)
+        .with_for_update()
+    ).scalar_one_or_none()
 
     if not factura:
         flash("La factura no existe.", "error")
         return redirect(url_for("facturas"))
 
-    try:
-        numero_factura = factura.numero
+    if factura.estado == "anulada":
+        flash("Esta factura ya está anulada.", "error")
+        return redirect(url_for("facturas"))
 
-        # Restaurar al inventario las cantidades vendidas en esta factura.
+    try:
+        # Restaurar el inventario una sola vez.
         for detalle in factura.detalles:
             producto = detalle.producto
             if producto is not None:
                 producto.stock = (producto.stock or 0) + detalle.cantidad
 
-        # La relación DetalleFactura usa cascade="all, delete-orphan".
-        # Al borrar la factura, SQLAlchemy elimina también sus detalles.
-        db.session.delete(factura)
+        # No borrar la factura ni sus detalles: se conserva el historial.
+        factura.estado = "anulada"
+        factura.fecha_anulacion = datetime.now()
         db.session.commit()
 
         flash(
-            f"La factura {numero_factura} fue eliminada correctamente y el inventario fue actualizado.",
-            "success"
+            f"La factura {factura.numero} fue anulada correctamente. "
+            "El inventario fue actualizado.",
+            "success",
         )
 
     except Exception:
         db.session.rollback()
-        app.logger.exception("Error al eliminar factura")
-        flash(
-            "No se pudo eliminar la factura. No se guardaron cambios.",
-            "error"
-        )
+        app.logger.exception("Error al anular factura")
+        flash("No se pudo anular la factura. No se guardaron cambios.", "error")
 
     return redirect(url_for("facturas"))
 
@@ -1052,20 +636,11 @@ def eliminar_factura(id):
 
 @app.route("/factura/ver/<int:id>")
 def ver_factura(id):
-
     factura = db.session.get(Factura, id)
-
     if not factura:
-        flash(
-            "La factura no existe.",
-            "error"
-        )
+        flash("La factura no existe.", "error")
         return redirect(url_for("facturas"))
-
-    return render_template(
-        "factura_ver.html",
-        factura=factura
-    )
+    return render_template("factura_ver.html", factura=factura)
 
 
 # ============================================================
@@ -1074,19 +649,14 @@ def ver_factura(id):
 
 @app.route("/reportes")
 def reportes():
-
-    total_productos = Producto.query.filter_by(
-        activo=True
-    ).count()
-
+    total_productos = Producto.query.filter_by(activo=True).count()
     total_clientes = Cliente.query.count()
-    total_facturas = Factura.query.count()
+    total_facturas = Factura.query.filter(Factura.estado != "anulada").count()
 
     ingresos = db.session.query(
-        db.func.coalesce(
-            db.func.sum(Factura.total),
-            0
-        )
+        db.func.coalesce(db.func.sum(Factura.total), 0)
+    ).filter(
+        Factura.estado != "anulada"
     ).scalar()
 
     return render_template(
@@ -1094,7 +664,7 @@ def reportes():
         total_productos=total_productos,
         total_clientes=total_clientes,
         total_facturas=total_facturas,
-        ingresos=ingresos
+        ingresos=ingresos,
     )
 
 
@@ -1104,16 +674,29 @@ def reportes():
 
 @app.route("/configuracion")
 def configuracion():
-
     return render_template("configuracion.html")
 
 
 # ============================================================
-# CREAR TABLAS SI NO EXISTEN
+# CREAR TABLAS Y AGREGAR COLUMNAS DE ESTADO SI FALTAN
 # ============================================================
 
 with app.app_context():
     db.create_all()
+
+    # db.create_all() no modifica tablas que ya existían. Estas sentencias
+    # agregan las columnas nuevas de forma compatible con PostgreSQL.
+    with db.engine.begin() as conexion:
+        conexion.exec_driver_sql("""
+            ALTER TABLE facturas
+            ADD COLUMN IF NOT EXISTS estado
+            VARCHAR(20) NOT NULL DEFAULT 'activa'
+        """)
+        conexion.exec_driver_sql("""
+            ALTER TABLE facturas
+            ADD COLUMN IF NOT EXISTS fecha_anulacion
+            TIMESTAMP NULL
+        """)
 
 
 # ============================================================
@@ -1121,4 +704,4 @@ with app.app_context():
 # ============================================================
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=os.getenv("FLASK_DEBUG", "0") == "1")
