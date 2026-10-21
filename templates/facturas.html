@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Facturas | FacturaPro</title>
 
     <style>
@@ -29,9 +27,7 @@
             align-items: center;
         }
 
-        header h1 {
-            font-size: 24px;
-        }
+        header h1 { font-size: 24px; }
 
         header a {
             color: white;
@@ -72,17 +68,14 @@
             font-weight: bold;
         }
 
-        .table-container {
-            overflow-x: auto;
-        }
+        .table-container { overflow-x: auto; }
 
         table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        th,
-        td {
+        th, td {
             padding: 14px;
             border-bottom: 1px solid #e5e7eb;
             text-align: left;
@@ -98,9 +91,7 @@
             color: #2563eb;
         }
 
-        .total {
-            font-weight: bold;
-        }
+        .total { font-weight: bold; }
 
         .acciones {
             display: flex;
@@ -121,14 +112,13 @@
             white-space: nowrap;
         }
 
-        .form-anular {
+        .form-anular, .form-reactivar {
             display: inline;
             margin: 0;
         }
 
-        .btn-anular {
+        .btn-anular, .btn-reactivar {
             display: inline-block;
-            background: #dc2626;
             color: white;
             border: none;
             padding: 8px 12px;
@@ -139,9 +129,11 @@
             white-space: nowrap;
         }
 
-        .btn-anular:hover {
-            background: #b91c1c;
-        }
+        .btn-anular { background: #dc2626; }
+        .btn-anular:hover { background: #b91c1c; }
+
+        .btn-reactivar { background: #15803d; }
+        .btn-reactivar:hover { background: #166534; }
 
         .estado {
             display: inline-block;
@@ -192,23 +184,16 @@
                 flex-wrap: wrap;
             }
 
-            header h1 {
-                font-size: 20px;
-            }
+            header h1 { font-size: 20px; }
 
             .container {
                 margin: 20px auto;
                 padding: 0 10px;
             }
 
-            .card {
-                padding: 15px;
-            }
+            .card { padding: 15px; }
 
-            th,
-            td {
-                padding: 10px;
-            }
+            th, td { padding: 10px; }
         }
     </style>
 </head>
@@ -216,30 +201,20 @@
 <body>
 
 <header>
-
     <h1>FacturaPro | Facturas</h1>
-
-    <a href="{{ url_for('inicio') }}">
-        ← Volver al panel
-    </a>
-
+    <a href="{{ url_for('inicio') }}">← Volver al panel</a>
 </header>
 
 <div class="container">
-
     <div class="card">
 
         <div class="top">
-
             <h2>Facturas registradas</h2>
 
-            <a
-                href="{{ url_for('nueva_factura') }}"
-                class="btn-nueva"
-            >
+            <a href="{{ url_for('nueva_factura') }}"
+               class="btn-nueva">
                 + Nueva factura
             </a>
-
         </div>
 
         <!-- MENSAJES DEL SISTEMA -->
@@ -254,9 +229,7 @@
         {% if facturas %}
 
         <div class="table-container">
-
             <table>
-
                 <thead>
                     <tr>
                         <th>Número</th>
@@ -271,11 +244,8 @@
                 </thead>
 
                 <tbody>
-
                     {% for factura in facturas %}
-
                     <tr>
-
                         <td class="numero">
                             {{ factura.numero }}
                         </td>
@@ -319,68 +289,68 @@
 
                         <!-- ACCIONES -->
                         <td>
-
                             <div class="acciones">
 
                                 <a
                                     href="{{ url_for('ver_factura', id=factura.id) }}"
-                                    class="btn-ver"
-                                >
+                                    class="btn-ver">
                                     👁️ Ver factura
                                 </a>
 
-                                {% if factura.estado != "anulada" %}
+                                {% if factura.estado == "anulada" %}
 
-                                <form
-                                    method="POST"
-                                    action="{{ url_for('anular_factura', id=factura.id) }}"
-                                    class="form-anular"
-                                    onsubmit="return confirm('¿Seguro que deseas anular esta factura? Se devolverán los productos al inventario.');"
-                                >
+                                    <!-- REACTIVAR FACTURA -->
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('reactivar_factura', id=factura.id) }}"
+                                        class="form-reactivar"
+                                        onsubmit="return confirm('¿Seguro que deseas reactivar esta factura? Se descontarán los productos del inventario.');">
 
-                                    <button
-                                        type="submit"
-                                        class="btn-anular"
-                                    >
-                                        🚫 Anular
-                                    </button>
+                                        <button
+                                            type="submit"
+                                            class="btn-reactivar">
+                                            ✅ Reactivar
+                                        </button>
+                                    </form>
 
-                                </form>
+                                {% else %}
+
+                                    <!-- ANULAR FACTURA -->
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('anular_factura', id=factura.id) }}"
+                                        class="form-anular"
+                                        onsubmit="return confirm('¿Seguro que deseas anular esta factura? Se devolverán los productos al inventario.');">
+
+                                        <button
+                                            type="submit"
+                                            class="btn-anular">
+                                            🚫 Anular
+                                        </button>
+                                    </form>
 
                                 {% endif %}
 
                             </div>
-
                         </td>
-
                     </tr>
-
                     {% endfor %}
-
                 </tbody>
-
             </table>
-
         </div>
 
         {% else %}
 
         <div class="vacio">
-
-            <h3>
-                No hay facturas registradas todavía.
-            </h3>
-
+            <h3>No hay facturas registradas todavía.</h3>
             <p style="margin-top: 10px;">
                 Crea tu primera factura para verla aquí.
             </p>
-
         </div>
 
         {% endif %}
 
     </div>
-
 </div>
 
 </body>
