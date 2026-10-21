@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Productos | FacturaPro</title>
 
     <style>
@@ -41,14 +39,11 @@
 
         .container {
             width: 95%;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 30px auto;
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 25px;
         }
 
@@ -62,6 +57,7 @@
             padding: 25px;
             margin-bottom: 25px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+            overflow-x: auto;
         }
 
         .card h3 {
@@ -86,6 +82,7 @@
         }
 
         input {
+            width: 100%;
             padding: 11px;
             border: 1px solid #d1d5db;
             border-radius: 7px;
@@ -117,6 +114,7 @@
 
         table {
             width: 100%;
+            min-width: 1100px;
             border-collapse: collapse;
         }
 
@@ -125,6 +123,7 @@
             color: white;
             padding: 13px;
             text-align: left;
+            white-space: nowrap;
         }
 
         td {
@@ -151,6 +150,15 @@
 
         .stock {
             font-weight: bold;
+        }
+
+        .margen {
+            font-weight: bold;
+            color: #15803d;
+        }
+
+        .perdida {
+            color: #dc2626;
         }
 
         .sin-productos {
@@ -181,17 +189,9 @@
             margin-bottom: 20px;
         }
 
-        .buscador input {
-            width: 100%;
-        }
-
         @media (max-width: 900px) {
             .form-grid {
                 grid-template-columns: repeat(2, 1fr);
-            }
-
-            table {
-                font-size: 13px;
             }
         }
 
@@ -205,18 +205,8 @@
                 gap: 15px;
             }
 
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-
-            .card {
-                overflow-x: auto;
-            }
-
-            table {
-                min-width: 700px;
+            .topbar a {
+                margin: 5px;
             }
         }
     </style>
@@ -225,7 +215,6 @@
 <body>
 
     <div class="topbar">
-
         <h1>FacturaPro</h1>
 
         <div>
@@ -234,7 +223,6 @@
             <a href="{{ url_for('clientes') }}">Clientes</a>
             <a href="{{ url_for('productos') }}">Productos</a>
         </div>
-
     </div>
 
     <div class="container">
@@ -244,310 +232,210 @@
         </div>
 
         {% with mensajes = get_flashed_messages(with_categories=true) %}
-
             {% if mensajes %}
-
                 {% for categoria, mensaje in mensajes %}
-
                     <div class="mensaje {{ categoria }}">
                         {{ mensaje }}
                     </div>
-
                 {% endfor %}
-
             {% endif %}
-
         {% endwith %}
 
-
-        <!-- AGREGAR PRODUCTO -->
-
         <div class="card">
-
             <h3>Agregar nuevo producto</h3>
 
-            <form
-                method="POST"
-                action="{{ url_for('agregar_producto') }}"
-            >
+            <form method="POST" action="{{ url_for('agregar_producto') }}">
 
                 <div class="form-grid">
 
                     <div class="form-group">
-
-                        <label>Código</label>
-
-                        <input
-                            type="text"
-                            name="codigo"
-                            placeholder="Ej: PR001"
-                            required
-                        >
-
+                        <label for="codigo">Código</label>
+                        <input type="text" id="codigo" name="codigo"
+                               placeholder="Ej: PR001" required>
                     </div>
 
-
                     <div class="form-group">
-
-                        <label>Nombre</label>
-
-                        <input
-                            type="text"
-                            name="nombre"
-                            placeholder="Nombre del producto"
-                            required
-                        >
-
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre"
+                               placeholder="Nombre del producto" required>
                     </div>
 
-
                     <div class="form-group">
-
-                        <label>Categoría</label>
-
-                        <input
-                            type="text"
-                            name="categoria"
-                            placeholder="Ej: Bebidas"
-                        >
-
+                        <label for="categoria">Categoría</label>
+                        <input type="text" id="categoria" name="categoria"
+                               placeholder="Ej: Ferretería">
                     </div>
 
-
                     <div class="form-group">
-
-                        <label>Precio</label>
-
-                        <input
-                            type="number"
-                            name="precio"
-                            step="0.01"
-                            min="0"
-                            placeholder="0.00"
-                            required
-                        >
-
+                        <label for="costo">Costo de compra (RD$)</label>
+                        <input type="number" id="costo" name="costo"
+                               step="0.01" min="0" placeholder="0.00" required>
                     </div>
 
-
                     <div class="form-group">
-
-                        <label>Stock</label>
-
-                        <input
-                            type="number"
-                            name="stock"
-                            min="0"
-                            placeholder="0"
-                            required
-                        >
-
+                        <label for="precio">Precio de venta (RD$)</label>
+                        <input type="number" id="precio" name="precio"
+                               step="0.01" min="0.01" placeholder="0.00" required>
                     </div>
 
-
                     <div class="form-group">
-
-                        <label>ITBIS (%)</label>
-
-                        <input
-                            type="number"
-                            name="itbis"
-                            step="0.01"
-                            value="18"
-                            min="0"
-                            max="100"
-                        >
-
+                        <label for="stock">Stock</label>
+                        <input type="number" id="stock" name="stock"
+                               min="0" placeholder="0" required>
                     </div>
 
+                    <div class="form-group">
+                        <label for="itbis">ITBIS (%)</label>
+                        <input type="number" id="itbis" name="itbis"
+                               step="0.01" value="18" min="0" max="100">
+                    </div>
 
                     <div class="form-group">
-
-                        <button
-                            type="submit"
-                            class="btn btn-agregar"
-                        >
+                        <button type="submit" class="btn btn-agregar">
                             + Agregar producto
                         </button>
-
                     </div>
 
                 </div>
-
             </form>
-
         </div>
 
-
-        <!-- LISTA DE PRODUCTOS -->
-
         <div class="card">
-
             <h3>Productos disponibles</h3>
 
             <div class="buscador">
-
-                <input
-                    type="text"
-                    id="buscarProducto"
-                    placeholder="🔎 Buscar producto por código, nombre o categoría..."
-                    onkeyup="buscarProductos()"
-                >
-
+                <input type="text" id="buscarProducto"
+                       placeholder="Buscar por código, nombre o categoría..."
+                       onkeyup="buscarProductos()">
             </div>
 
-
             <table>
-
                 <thead>
-
                     <tr>
-
                         <th>ID</th>
                         <th>Código</th>
                         <th>Producto</th>
                         <th>Categoría</th>
-                        <th>Precio</th>
+                        <th>Costo de compra</th>
+                        <th>Precio de venta</th>
+                        <th>Ganancia por unidad</th>
                         <th>Stock</th>
                         <th>ITBIS</th>
+                        <th>Margen de ganancia</th>
                         <th>Acción</th>
-
                     </tr>
-
                 </thead>
 
                 <tbody id="tablaProductos">
 
                     {% for producto in productos %}
-
                         {% if producto.activo %}
-
                             <tr>
+                                <td>{{ producto.id }}</td>
+                                <td>{{ producto.codigo }}</td>
+                                <td>{{ producto.nombre }}</td>
+                                <td>{{ producto.categoria or 'Sin categoría' }}</td>
 
                                 <td>
-                                    {{ producto.id }}
-                                </td>
-
-                                <td>
-                                    {{ producto.codigo }}
-                                </td>
-
-                                <td>
-                                    {{ producto.nombre }}
-                                </td>
-
-                                <td>
-                                    {{ producto.categoria or 'Sin categoría' }}
+                                    {% if producto.costo is not none %}
+                                        RD${{ "%.2f"|format(producto.costo|float) }}
+                                    {% else %}
+                                        Pendiente
+                                    {% endif %}
                                 </td>
 
                                 <td>
-                                    ${{ "%.2f"|format(producto.precio|float) }}
+                                    RD${{ "%.2f"|format(producto.precio|float) }}
                                 </td>
 
-                                <td class="stock">
-
-                                    {{ producto.stock }}
-
+                                <td>
+                                    {% if producto.costo is not none %}
+                                        RD${{ "%.2f"|format(
+                                            producto.precio|float - producto.costo|float
+                                        ) }}
+                                    {% else %}
+                                        Pendiente
+                                    {% endif %}
                                 </td>
+
+                                <td class="stock">{{ producto.stock }}</td>
 
                                 <td>
                                     {{ "%.2f"|format(producto.itbis|float) }}%
                                 </td>
 
+                                <td class="margen">
+                                    {% if producto.margen_ganancia is not none %}
+                                        {% if producto.margen_ganancia < 0 %}
+                                            <span class="perdida">
+                                                {{ "%.2f"|format(
+                                                    producto.margen_ganancia|float
+                                                ) }}%
+                                            </span>
+                                        {% else %}
+                                            {{ "%.2f"|format(
+                                                producto.margen_ganancia|float
+                                            ) }}%
+                                        {% endif %}
+                                    {% else %}
+                                        Registra el costo
+                                    {% endif %}
+                                </td>
+
                                 <td>
+                                    <form method="POST"
+                                          action="{{ url_for('eliminar_producto', id=producto.id) }}"
+                                          onsubmit="return confirmarEliminacion(this);">
 
-                                    <form
-                                        method="POST"
-                                        action="{{ url_for('eliminar_producto', id=producto.id) }}"
-                                        onsubmit="return confirmarEliminacion('{{ producto.nombre }}');"
-                                    >
-
-                                        <button
-                                            type="submit"
-                                            class="btn-eliminar"
-                                        >
+                                        <button type="submit" class="btn-eliminar">
                                             🗑️ Eliminar
                                         </button>
 
                                     </form>
-
                                 </td>
-
                             </tr>
-
                         {% endif %}
-
                     {% else %}
-
                         <tr>
-
-                            <td
-                                colspan="8"
-                                class="sin-productos"
-                            >
+                            <td colspan="11" class="sin-productos">
                                 No hay productos registrados.
                             </td>
-
                         </tr>
-
                     {% endfor %}
 
                 </tbody>
-
             </table>
-
         </div>
 
     </div>
 
-
     <script>
-
-        function confirmarEliminacion(nombre) {
+        function confirmarEliminacion(formulario) {
+            const fila = formulario.closest("tr");
+            const nombre = fila
+                ? fila.cells[2].textContent.trim()
+                : "este producto";
 
             return confirm(
                 "¿Seguro que deseas eliminar el producto: " +
                 nombre +
                 "?\n\nEl producto desaparecerá de la lista, pero las facturas anteriores se conservarán."
             );
-
         }
-
 
         function buscarProductos() {
+            const texto = document.getElementById("buscarProducto")
+                .value.toLowerCase();
 
-            const texto =
-                document
-                .getElementById("buscarProducto")
-                .value
-                .toLowerCase();
-
-            const filas =
-                document.querySelectorAll(
-                    "#tablaProductos tr"
-                );
+            const filas = document.querySelectorAll("#tablaProductos tr");
 
             filas.forEach(function(fila) {
+                const contenido = fila.textContent.toLowerCase();
 
-                const contenido =
-                    fila.textContent.toLowerCase();
-
-                if (contenido.includes(texto)) {
-
-                    fila.style.display = "";
-
-                } else {
-
-                    fila.style.display = "none";
-
-                }
-
+                fila.style.display = contenido.includes(texto) ? "" : "none";
             });
-
         }
-
     </script>
 
 </body>
-
 </html>
