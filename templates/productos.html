@@ -14,7 +14,7 @@
 
         body {
             font-family: Arial, sans-serif;
-            background: #f4f6f8;
+            background: #f3f4f6;
             color: #1f2937;
         }
 
@@ -25,16 +25,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .topbar h1 {
-            font-size: 22px;
+            font-size: 24px;
         }
 
         .topbar a {
             color: white;
             text-decoration: none;
-            margin-left: 20px;
+            margin-left: 15px;
         }
 
         .container {
@@ -43,21 +45,17 @@
             margin: 30px auto;
         }
 
-        .header {
+        h2 {
             margin-bottom: 25px;
-        }
-
-        .header h2 {
             font-size: 28px;
         }
 
         .card {
             background: white;
-            border-radius: 12px;
             padding: 25px;
+            border-radius: 12px;
             margin-bottom: 25px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-            overflow-x: auto;
         }
 
         .card h3 {
@@ -66,8 +64,8 @@
 
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
         }
 
         .form-group {
@@ -75,18 +73,18 @@
             flex-direction: column;
         }
 
-        .form-group label {
-            margin-bottom: 7px;
+        label {
             font-weight: bold;
             font-size: 14px;
+            margin-bottom: 8px;
         }
 
         input {
-            width: 100%;
-            padding: 11px;
+            padding: 12px;
             border: 1px solid #d1d5db;
             border-radius: 7px;
             font-size: 14px;
+            width: 100%;
         }
 
         input:focus {
@@ -94,10 +92,10 @@
             border-color: #2563eb;
         }
 
-        .btn {
+        button {
             border: none;
             border-radius: 7px;
-            padding: 11px 18px;
+            padding: 12px 16px;
             cursor: pointer;
             font-weight: bold;
         }
@@ -105,11 +103,20 @@
         .btn-agregar {
             background: #2563eb;
             color: white;
-            margin-top: 23px;
+            margin-top: 24px;
         }
 
         .btn-agregar:hover {
             background: #1d4ed8;
+        }
+
+        .buscador {
+            margin-bottom: 20px;
+        }
+
+        .tabla-contenedor {
+            width: 100%;
+            overflow-x: auto;
         }
 
         table {
@@ -121,7 +128,7 @@
         th {
             background: #111827;
             color: white;
-            padding: 13px;
+            padding: 14px;
             text-align: left;
             white-space: nowrap;
         }
@@ -131,67 +138,46 @@
             border-bottom: 1px solid #e5e7eb;
         }
 
-        tr:hover {
+        tbody tr:hover {
             background: #f9fafb;
+        }
+
+        .margen {
+            color: #15803d;
+            font-weight: bold;
         }
 
         .btn-eliminar {
             background: #dc2626;
             color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-eliminar:hover {
-            background: #b91c1c;
-        }
-
-        .stock {
-            font-weight: bold;
-        }
-
-        .margen {
-            font-weight: bold;
-            color: #15803d;
-        }
-
-        .perdida {
-            color: #dc2626;
-        }
-
-        .sin-productos {
-            text-align: center;
-            padding: 30px;
-            color: #6b7280;
+            white-space: nowrap;
         }
 
         .mensaje {
             padding: 14px;
             border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: bold;
+            margin-bottom: 15px;
         }
 
-        .mensaje.success {
+        .success {
             background: #dcfce7;
             color: #166534;
         }
 
-        .mensaje.error {
+        .error {
             background: #fee2e2;
             color: #991b1b;
         }
 
-        .buscador {
-            width: 100%;
-            margin-bottom: 20px;
+        .vacio {
+            text-align: center;
+            padding: 25px;
+            color: #6b7280;
         }
 
         @media (max-width: 900px) {
             .form-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
 
@@ -200,13 +186,17 @@
                 grid-template-columns: 1fr;
             }
 
+            .card {
+                padding: 16px;
+            }
+
             .topbar {
-                flex-direction: column;
-                gap: 15px;
+                padding: 18px;
             }
 
             .topbar a {
-                margin: 5px;
+                margin-left: 0;
+                margin-right: 12px;
             }
         }
     </style>
@@ -214,34 +204,31 @@
 
 <body>
 
-    <div class="topbar">
+    <header class="topbar">
         <h1>FacturaPro</h1>
 
-        <div>
+        <nav>
             <a href="{{ url_for('inicio') }}">Panel</a>
             <a href="{{ url_for('facturas') }}">Facturas</a>
             <a href="{{ url_for('clientes') }}">Clientes</a>
             <a href="{{ url_for('productos') }}">Productos</a>
-        </div>
-    </div>
+        </nav>
+    </header>
 
-    <div class="container">
+    <main class="container">
 
-        <div class="header">
-            <h2>Productos</h2>
-        </div>
+        <h2>Productos</h2>
 
         {% with mensajes = get_flashed_messages(with_categories=true) %}
-            {% if mensajes %}
-                {% for categoria, mensaje in mensajes %}
-                    <div class="mensaje {{ categoria }}">
-                        {{ mensaje }}
-                    </div>
-                {% endfor %}
-            {% endif %}
+            {% for categoria, mensaje in mensajes %}
+                <div class="mensaje {{ categoria }}">
+                    {{ mensaje }}
+                </div>
+            {% endfor %}
         {% endwith %}
 
-        <div class="card">
+        <section class="card">
+
             <h3>Agregar nuevo producto</h3>
 
             <form method="POST" action="{{ url_for('agregar_producto') }}">
@@ -250,91 +237,146 @@
 
                     <div class="form-group">
                         <label for="codigo">Código</label>
-                        <input type="text" id="codigo" name="codigo"
-                               placeholder="Ej: PR001" required>
+                        <input
+                            type="text"
+                            id="codigo"
+                            name="codigo"
+                            placeholder="Ej. CAM001"
+                            required
+                        >
                     </div>
 
                     <div class="form-group">
                         <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" name="nombre"
-                               placeholder="Nombre del producto" required>
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
+                            placeholder="Nombre del producto"
+                            required
+                        >
                     </div>
 
                     <div class="form-group">
                         <label for="categoria">Categoría</label>
-                        <input type="text" id="categoria" name="categoria"
-                               placeholder="Ej: Ferretería">
+                        <input
+                            type="text"
+                            id="categoria"
+                            name="categoria"
+                            placeholder="Ej. Camisas"
+                        >
                     </div>
 
                     <div class="form-group">
                         <label for="costo">Costo de compra (RD$)</label>
-                        <input type="number" id="costo" name="costo"
-                               step="0.01" min="0" placeholder="0.00" required>
+                        <input
+                            type="number"
+                            id="costo"
+                            name="costo"
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00"
+                            required
+                        >
                     </div>
 
                     <div class="form-group">
                         <label for="precio">Precio de venta (RD$)</label>
-                        <input type="number" id="precio" name="precio"
-                               step="0.01" min="0.01" placeholder="0.00" required>
+                        <input
+                            type="number"
+                            id="precio"
+                            name="precio"
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00"
+                            required
+                        >
                     </div>
 
                     <div class="form-group">
                         <label for="stock">Stock</label>
-                        <input type="number" id="stock" name="stock"
-                               min="0" placeholder="0" required>
+                        <input
+                            type="number"
+                            id="stock"
+                            name="stock"
+                            min="0"
+                            step="1"
+                            placeholder="0"
+                            required
+                        >
                     </div>
 
                     <div class="form-group">
                         <label for="itbis">ITBIS (%)</label>
-                        <input type="number" id="itbis" name="itbis"
-                               step="0.01" value="18" min="0" max="100">
+                        <input
+                            type="number"
+                            id="itbis"
+                            name="itbis"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            value="18"
+                            required
+                        >
                     </div>
 
                     <div class="form-group">
-                        <button type="submit" class="btn btn-agregar">
+                        <button type="submit" class="btn-agregar">
                             + Agregar producto
                         </button>
                     </div>
 
                 </div>
-            </form>
-        </div>
 
-        <div class="card">
+            </form>
+
+        </section>
+
+        <section class="card">
+
             <h3>Productos disponibles</h3>
 
             <div class="buscador">
-                <input type="text" id="buscarProducto"
-                       placeholder="Buscar por código, nombre o categoría..."
-                       onkeyup="buscarProductos()">
+                <input
+                    type="text"
+                    id="buscarProducto"
+                    placeholder="Buscar por código, nombre o categoría..."
+                    oninput="buscarProductos()"
+                >
             </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Código</th>
-                        <th>Producto</th>
-                        <th>Categoría</th>
-                        <th>Costo de compra</th>
-                        <th>Precio de venta</th>
-                        <th>Ganancia por unidad</th>
-                        <th>Stock</th>
-                        <th>ITBIS</th>
-                        <th>Margen de ganancia</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
+            <div class="tabla-contenedor">
 
-                <tbody id="tablaProductos">
+                <table>
 
-                    {% for producto in productos %}
-                        {% if producto.activo %}
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Código</th>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Costo de compra</th>
+                            <th>Precio de venta</th>
+                            <th>Stock</th>
+                            <th>ITBIS</th>
+                            <th>Margen de ganancia</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tablaProductos">
+
+                        {% for producto in productos %}
                             <tr>
                                 <td>{{ producto.id }}</td>
+
                                 <td>{{ producto.codigo }}</td>
+
                                 <td>{{ producto.nombre }}</td>
-                                <td>{{ producto.categoria or 'Sin categoría' }}</td>
+
+                                <td>
+                                    {{ producto.categoria or 'Sin categoría' }}
+                                </td>
 
                                 <td>
                                     {% if producto.costo is not none %}
@@ -348,91 +390,74 @@
                                     RD${{ "%.2f"|format(producto.precio|float) }}
                                 </td>
 
+                                <td>{{ producto.stock }}</td>
+
                                 <td>
-                                    {% if producto.costo is not none %}
-                                        RD${{ "%.2f"|format(
-                                            producto.precio|float - producto.costo|float
-                                        ) }}
+                                    {{ "%.2f"|format((producto.itbis or 0)|float) }}%
+                                </td>
+
+                                <td class="margen">
+                                    {% if producto.margen_ganancia is not none %}
+                                        {{ "%.2f"|format(producto.margen_ganancia|float) }}%
                                     {% else %}
                                         Pendiente
                                     {% endif %}
                                 </td>
 
-                                <td class="stock">{{ producto.stock }}</td>
-
                                 <td>
-                                    {{ "%.2f"|format(producto.itbis|float) }}%
-                                </td>
-
-                                <td class="margen">
-                                    {% if producto.margen_ganancia is not none %}
-                                        {% if producto.margen_ganancia < 0 %}
-                                            <span class="perdida">
-                                                {{ "%.2f"|format(
-                                                    producto.margen_ganancia|float
-                                                ) }}%
-                                            </span>
-                                        {% else %}
-                                            {{ "%.2f"|format(
-                                                producto.margen_ganancia|float
-                                            ) }}%
-                                        {% endif %}
-                                    {% else %}
-                                        Registra el costo
-                                    {% endif %}
-                                </td>
-
-                                <td>
-                                    <form method="POST"
-                                          action="{{ url_for('eliminar_producto', id=producto.id) }}"
-                                          onsubmit="return confirmarEliminacion(this);">
-
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('eliminar_producto', id=producto.id) }}"
+                                        onsubmit="return confirmarEliminacion();"
+                                    >
                                         <button type="submit" class="btn-eliminar">
-                                            🗑️ Eliminar
+                                            Eliminar
                                         </button>
-
                                     </form>
                                 </td>
                             </tr>
-                        {% endif %}
-                    {% else %}
-                        <tr>
-                            <td colspan="11" class="sin-productos">
-                                No hay productos registrados.
-                            </td>
-                        </tr>
-                    {% endfor %}
 
-                </tbody>
-            </table>
-        </div>
+                        {% else %}
 
-    </div>
+                            <tr>
+                                <td colspan="10" class="vacio">
+                                    No hay productos registrados.
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
 
     <script>
-        function confirmarEliminacion(formulario) {
-            const fila = formulario.closest("tr");
-            const nombre = fila
-                ? fila.cells[2].textContent.trim()
-                : "este producto";
-
+        function confirmarEliminacion() {
             return confirm(
-                "¿Seguro que deseas eliminar el producto: " +
-                nombre +
-                "?\n\nEl producto desaparecerá de la lista, pero las facturas anteriores se conservarán."
+                "¿Seguro que deseas eliminar este producto?"
             );
         }
 
         function buscarProductos() {
-            const texto = document.getElementById("buscarProducto")
-                .value.toLowerCase();
+            const texto = document
+                .getElementById("buscarProducto")
+                .value
+                .toLowerCase();
 
-            const filas = document.querySelectorAll("#tablaProductos tr");
+            const filas = document.querySelectorAll(
+                "#tablaProductos tr"
+            );
 
             filas.forEach(function(fila) {
-                const contenido = fila.textContent.toLowerCase();
-
-                fila.style.display = contenido.includes(texto) ? "" : "none";
+                fila.style.display = fila.textContent
+                    .toLowerCase()
+                    .includes(texto) ? "" : "none";
             });
         }
     </script>
