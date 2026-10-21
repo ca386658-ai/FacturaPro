@@ -185,10 +185,18 @@ class Producto(db.Model):
     codigo = db.Column(db.String(50), unique=True, nullable=False)
     nombre = db.Column(db.String(100), nullable=False)
     categoria = db.Column(db.String(100))
+    costo = db.Column(db.Numeric(10, 2), nullable=True)
     precio = db.Column(db.Numeric(10, 2), nullable=False)
     stock = db.Column(db.Integer, default=0)
     itbis = db.Column(db.Numeric(5, 2), default=18.00)
     activo = db.Column(db.Boolean, default=True, nullable=False)
+
+    @property
+    def margen_ganancia(self):
+        """Margen porcentual sobre el precio de venta."""
+        if self.costo is None or self.precio is None or self.precio <= 0:
+            return None
+        return ((self.precio - self.costo) / self.precio) * Decimal("100")
 
 
 # ============================================================
@@ -283,6 +291,8 @@ def agregar_producto():
         codigo = request.form.get("codigo", "").strip()
         nombre = request.form.get("nombre", "").strip()
         categoria = request.form.get("categoria", "").strip()
+        costo_texto = request.form.get("costo", "").strip()
+        costo = Decimal(costo_texto) if costo_texto else None
         precio = Decimal(request.form.get("precio", "0"))
         stock = int(request.form.get("stock", "0"))
         itbis = Decimal(request.form.get("itbis", "18"))
@@ -290,8 +300,14 @@ def agregar_producto():
         if not codigo or not nombre:
             flash("El código y el nombre son obligatorios.", "error")
             return redirect(url_for("productos"))
+        if costo is None:
+            flash("El costo de compra es obligatorio.", "error")
+            return redirect(url_for("productos"))
+        if costo < 0:
+            flash("El costo de compra no puede ser negativo.", "error")
+            return redirect(url_for("productos"))
         if precio < 0:
-            flash("El precio no puede ser negativo.", "error")
+            flash("El precio de venta no puede ser negativo.", "error")
             return redirect(url_for("productos"))
         if stock < 0:
             flash("El stock no puede ser negativo.", "error")
@@ -305,6 +321,7 @@ def agregar_producto():
             if not producto_existente.activo:
                 producto_existente.nombre = nombre
                 producto_existente.categoria = categoria
+                producto_existente.costo = costo
                 producto_existente.precio = precio
                 producto_existente.stock = stock
                 producto_existente.itbis = itbis
@@ -319,6 +336,7 @@ def agregar_producto():
             codigo=codigo,
             nombre=nombre,
             categoria=categoria,
+            costo=costo,
             precio=precio,
             stock=stock,
             itbis=itbis,
@@ -769,6 +787,10 @@ with app.app_context():
     # db.create_all() no modifica tablas existentes; añadir columnas faltantes.
     with db.engine.begin() as conexion:
         conexion.exec_driver_sql("""
+            ALTER TABLE productos
+            ADD COLUMN IF NOT EXISTS costo NUMERIC(10, 2) NULL
+        """)
+        conexion.exec_driver_sql("""
             ALTER TABLE facturas
             ADD COLUMN IF NOT EXISTS estado
             VARCHAR(20) NOT NULL DEFAULT 'activa'
@@ -782,7 +804,6 @@ with app.app_context():
 
 # ============================================================
 # EJECUTAR SISTEMA
-# ============================================================
 
 if __name__ == "__main__":
     app.run(debug=os.getenv("FLASK_DEBUG", "0") == "1")
