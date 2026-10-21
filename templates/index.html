@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -111,6 +112,34 @@
             padding: 30px;
             color: #777;
         }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 20px;
+            }
+
+            nav {
+                padding: 15px 20px;
+                line-height: 2.2;
+            }
+
+            nav a {
+                margin-right: 12px;
+            }
+
+            .contenedor {
+                margin: 25px auto;
+                padding: 0 15px;
+            }
+
+            .bienvenida {
+                padding: 22px;
+            }
+
+            .tarjeta {
+                padding: 22px;
+            }
+        }
     </style>
 </head>
 
@@ -140,11 +169,12 @@
 
     <div class="tarjetas">
 
+        <!-- TOTAL DE FACTURAS -->
         <div class="tarjeta">
             <h3>📄 Facturas</h3>
 
             <div class="numero">
-                {{ facturas|length if facturas is defined else 0 }}
+                {{ total_facturas }}
             </div>
 
             <p>Consulta las facturas registradas.</p>
@@ -154,11 +184,12 @@
             </a>
         </div>
 
+        <!-- TOTAL DE CLIENTES -->
         <div class="tarjeta">
             <h3>👥 Clientes</h3>
 
             <div class="numero">
-                {{ clientes|length }}
+                {{ total_clientes }}
             </div>
 
             <p>Administra tus clientes.</p>
@@ -168,11 +199,12 @@
             </a>
         </div>
 
+        <!-- TOTAL DE PRODUCTOS -->
         <div class="tarjeta">
             <h3>📦 Productos</h3>
 
             <div class="numero">
-                {{ productos|length }}
+                {{ total_productos }}
             </div>
 
             <p>Administra tus productos y stock.</p>
@@ -182,6 +214,7 @@
             </a>
         </div>
 
+        <!-- CREAR FACTURA -->
         <div class="tarjeta">
             <h3>🧾 Nueva factura</h3>
 
@@ -192,6 +225,7 @@
             </a>
         </div>
 
+        <!-- REPORTES -->
         <div class="tarjeta">
             <h3>📊 Reportes</h3>
 
@@ -202,6 +236,7 @@
             </a>
         </div>
 
+        <!-- CONFIGURACIÓN -->
         <div class="tarjeta">
             <h3>⚙️ Configuración</h3>
 
