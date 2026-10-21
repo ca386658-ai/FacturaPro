@@ -206,7 +206,7 @@ class Factura(db.Model):
     itbis = db.Column(db.Numeric(10, 2), default=0)
     total = db.Column(db.Numeric(10, 2), default=0)
 
-    # Estado para conservar las facturas anuladas en el historial.
+    # Conservar las facturas anuladas en el historial.
     estado = db.Column(
         db.String(20), nullable=False, default="activa", server_default="activa"
     )
@@ -588,30 +588,29 @@ def facturas():
 
 @app.route("/factura/anular/<int:id>", methods=["POST"])
 def anular_factura(id):
-    # Bloquear la fila durante la anulación para evitar que dos solicitudes
-    # simultáneas devuelvan el inventario dos veces (PostgreSQL).
-    factura = db.session.execute(
-        db.select(Factura)
-        .where(Factura.id == id)
-        .with_for_update()
-    ).scalar_one_or_none()
-
-    if not factura:
-        flash("La factura no existe.", "error")
-        return redirect(url_for("facturas"))
-
-    if factura.estado == "anulada":
-        flash("Esta factura ya está anulada.", "error")
-        return redirect(url_for("facturas"))
-
     try:
+        # Bloquear la fila durante la anulación para evitar dobles devoluciones.
+        factura = db.session.execute(
+            db.select(Factura)
+            .where(Factura.id == id)
+            .with_for_update()
+        ).scalar_one_or_none()
+
+        if not factura:
+            flash("La factura no existe.", "error")
+            return redirect(url_for("facturas"))
+
+        if factura.estado == "anulada":
+            flash("Esta factura ya está anulada.", "error")
+            return redirect(url_for("facturas"))
+
         # Restaurar el inventario una sola vez.
         for detalle in factura.detalles:
             producto = detalle.producto
             if producto is not None:
                 producto.stock = (producto.stock or 0) + detalle.cantidad
 
-        # No borrar la factura ni sus detalles: se conserva el historial.
+        # Conservar la factura y sus detalles en el historial.
         factura.estado = "anulada"
         factura.fecha_anulacion = datetime.now()
         db.session.commit()
@@ -626,6 +625,89 @@ def anular_factura(id):
         db.session.rollback()
         app.logger.exception("Error al anular factura")
         flash("No se pudo anular la factura. No se guardaron cambios.", "error")
+
+    return redirect(url_for("facturas"))
+
+
+# ============================================================
+# REACTIVAR FACTURA
+# ============================================================
+
+@app.route("/factura/reactivar/<int:id>", methods=["POST"])
+def reactivar_factura(id):
+    try:
+        # Bloquear la factura para evitar dos reactivaciones simultáneas.
+        factura = db.session.execute(
+            db.select(Factura)
+            .where(Factura.id == id)
+            .with_for_update()
+        ).scalar_one_or_none()
+
+        if factura is None:
+            flash("La factura no existe.", "error")
+            return redirect(url_for("facturas"))
+
+        if factura.estado != "anulada":
+            flash("Esta factura no está anulada.", "error")
+            return redirect(url_for("facturas"))
+
+        # Agrupar cantidades por producto, por si aparece más de una vez.
+        cantidades = {}
+        for detalle in factura.detalles:
+            producto_id = detalle.producto_id
+            cantidades[producto_id] = (
+                cantidades.get(producto_id, 0) + detalle.cantidad
+            )
+
+        productos_bloqueados = {}
+
+        # Bloquear productos y comprobar todas las existencias antes de cambiar nada.
+        for producto_id, cantidad in cantidades.items():
+            producto = db.session.execute(
+                db.select(Producto)
+                .where(Producto.id == producto_id)
+                .with_for_update()
+            ).scalar_one_or_none()
+
+            if producto is None:
+                db.session.rollback()
+                flash(
+                    "No se puede reactivar: falta un producto de la factura.",
+                    "error",
+                )
+                return redirect(url_for("facturas"))
+
+            stock_actual = producto.stock or 0
+            if stock_actual < cantidad:
+                nombre_producto = producto.nombre
+                db.session.rollback()
+                flash(
+                    f"No hay suficiente inventario para reactivar {factura.numero}. "
+                    f"Producto: {nombre_producto}. Necesitas {cantidad} y tienes "
+                    f"{stock_actual}.",
+                    "error",
+                )
+                return redirect(url_for("facturas"))
+
+            productos_bloqueados[producto_id] = producto
+
+        # Si todas las existencias son suficientes, descontarlas.
+        for producto_id, cantidad in cantidades.items():
+            productos_bloqueados[producto_id].stock -= cantidad
+
+        factura.estado = "activa"
+        factura.fecha_anulacion = None
+        db.session.commit()
+
+        flash(
+            f"La factura {factura.numero} fue reactivada correctamente.",
+            "success",
+        )
+
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Error al reactivar factura")
+        flash("No se pudo reactivar la factura. No se guardaron cambios.", "error")
 
     return redirect(url_for("facturas"))
 
@@ -684,8 +766,7 @@ def configuracion():
 with app.app_context():
     db.create_all()
 
-    # db.create_all() no modifica tablas que ya existían. Estas sentencias
-    # agregan las columnas nuevas de forma compatible con PostgreSQL.
+    # db.create_all() no modifica tablas existentes; añadir columnas faltantes.
     with db.engine.begin() as conexion:
         conexion.exec_driver_sql("""
             ALTER TABLE facturas
