@@ -11,7 +11,7 @@ from flask import (
 )
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 import json
 import os
 
@@ -250,12 +250,16 @@ class Producto(db.Model):
 
     @property
     def margen_ganancia(self):
-        """Margen porcentual sobre el precio de venta."""
-        if self.costo is None or self.precio is None or self.precio <= 0:
+        """Porcentaje de ganancia calculado sobre el costo de compra."""
+        if (
+            self.costo is None
+            or self.precio is None
+            or self.costo <= 0
+        ):
             return None
 
         return (
-            (self.precio - self.costo) / self.precio
+            (self.precio - self.costo) / self.costo
         ) * Decimal("100")
 
 
@@ -393,36 +397,77 @@ def agregar_producto():
         codigo = request.form.get("codigo", "").strip()
         nombre = request.form.get("nombre", "").strip()
         categoria = request.form.get("categoria", "").strip()
-        costo_texto = request.form.get("costo", "").strip()
 
-        costo = Decimal(costo_texto) if costo_texto else None
-        precio = Decimal(request.form.get("precio", "0"))
-        stock = int(request.form.get("stock", "0"))
-        itbis = Decimal(request.form.get("itbis", "18"))
+        costo_texto = request.form.get("costo", "").strip()
+        margen_texto = request.form.get("margen", "30").strip()
+        stock_texto = request.form.get("stock", "0").strip()
+        itbis_texto = request.form.get("itbis", "18").strip()
 
         if not codigo or not nombre:
             flash("El código y el nombre son obligatorios.", "error")
             return redirect(url_for("productos"))
 
-        if costo is None:
+        if not costo_texto:
             flash("El costo de compra es obligatorio.", "error")
             return redirect(url_for("productos"))
 
-        if costo < 0:
-            flash("El costo de compra no puede ser negativo.", "error")
+        if not margen_texto or not stock_texto or not itbis_texto:
+            flash(
+                "Completa el porcentaje de ganancia, el stock y el ITBIS.",
+                "error",
+            )
             return redirect(url_for("productos"))
 
-        if precio < 0:
-            flash("El precio de venta no puede ser negativo.", "error")
+        try:
+            costo = Decimal(costo_texto)
+            margen = Decimal(margen_texto)
+            stock = int(stock_texto)
+            itbis = Decimal(itbis_texto)
+        except (InvalidOperation, ValueError):
+            flash(
+                "Revisa el costo, el porcentaje de ganancia, el stock y el ITBIS.",
+                "error",
+            )
+            return redirect(url_for("productos"))
+
+        if not costo.is_finite() or costo < 0:
+            flash(
+                "El costo de compra debe ser válido y no negativo.",
+                "error",
+            )
+            return redirect(url_for("productos"))
+
+        if (
+            not margen.is_finite()
+            or margen < 0
+            or margen > 1000
+        ):
+            flash(
+                "La ganancia debe estar entre 0 % y 1000 %.",
+                "error",
+            )
             return redirect(url_for("productos"))
 
         if stock < 0:
             flash("El stock no puede ser negativo.", "error")
             return redirect(url_for("productos"))
 
-        if itbis < 0 or itbis > 100:
-            flash("El ITBIS debe estar entre 0 y 100.", "error")
+        if (
+            not itbis.is_finite()
+            or itbis < 0
+            or itbis > 100
+        ):
+            flash(
+                "El ITBIS debe estar entre 0 y 100.",
+                "error",
+            )
             return redirect(url_for("productos"))
+
+        # Calcular el precio de venta en el servidor.
+        # El precio enviado por el navegador no se utiliza.
+        precio = (
+            costo * (Decimal("1") + margen / Decimal("100"))
+        ).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
         producto_existente = Producto.query.filter_by(
             codigo=codigo
@@ -441,7 +486,7 @@ def agregar_producto():
                 db.session.commit()
 
                 flash(
-                    "El producto fue reactivado correctamente.",
+                    f"Producto reactivado. Precio de venta: RD$ {precio:.2f}.",
                     "success",
                 )
                 return redirect(url_for("productos"))
@@ -463,7 +508,10 @@ def agregar_producto():
         db.session.add(producto)
         db.session.commit()
 
-        flash("Producto agregado correctamente.", "success")
+        flash(
+            f"Producto agregado correctamente. Precio de venta: RD$ {precio:.2f}.",
+            "success",
+        )
 
     except Exception:
         db.session.rollback()
