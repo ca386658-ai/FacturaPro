@@ -229,6 +229,8 @@ class Cliente(db.Model):
     telefono = db.Column(db.String(30))
     correo = db.Column(db.String(120))
     direccion = db.Column(db.String(200))
+    # Baja lógica: se oculta de los listados, pero conserva sus facturas.
+    activo = db.Column(db.Boolean, default=True, nullable=False)
 
 
 # ============================================================
@@ -334,8 +336,8 @@ def inicio():
             activo=True
         ).count()
 
-        # Contar todos los clientes registrados.
-        total_clientes = Cliente.query.count()
+        # Contar solamente los clientes activos.
+        total_clientes = Cliente.query.filter_by(activo=True).count()
 
         # Contar las facturas que no están anuladas.
         total_facturas = Factura.query.filter(
@@ -554,7 +556,7 @@ def eliminar_producto(id):
 @app.route("/clientes")
 def clientes():
     busqueda = request.args.get("buscar", "").strip()
-    consulta = Cliente.query
+    consulta = Cliente.query.filter_by(activo=True)
 
     if busqueda:
         consulta = consulta.filter(
@@ -593,6 +595,7 @@ def agregar_cliente():
             telefono=telefono,
             correo=correo,
             direccion=direccion,
+            activo=True,
         )
 
         db.session.add(cliente)
@@ -621,17 +624,15 @@ def eliminar_cliente(id):
         return redirect(url_for("clientes"))
 
     try:
-        if cliente.facturas:
-            flash(
-                "Este cliente tiene facturas asociadas y no puede eliminarse.",
-                "error",
-            )
-            return redirect(url_for("clientes"))
-
-        db.session.delete(cliente)
+        # No se borra físicamente el cliente: las facturas históricas
+        # siguen apuntando al mismo registro y conservan sus datos.
+        cliente.activo = False
         db.session.commit()
 
-        flash("Cliente eliminado correctamente.", "success")
+        flash(
+            "Cliente retirado de la lista. Sus facturas se conservaron.",
+            "success",
+        )
 
     except Exception:
         db.session.rollback()
@@ -647,9 +648,9 @@ def eliminar_cliente(id):
 
 @app.route("/factura/nueva")
 def nueva_factura():
-    clientes_lista = Cliente.query.order_by(
-        Cliente.nombre.asc()
-    ).all()
+    clientes_lista = Cliente.query.filter_by(
+        activo=True
+    ).order_by(Cliente.nombre.asc()).all()
 
     productos_lista = (
         Producto.query
@@ -684,9 +685,9 @@ def guardar_factura():
         if cliente_id:
             cliente = db.session.get(Cliente, int(cliente_id))
 
-            if not cliente:
+            if not cliente or not cliente.activo:
                 raise ValueError(
-                    "El cliente seleccionado no existe."
+                    "El cliente seleccionado no existe o está inactivo."
                 )
 
         subtotal_general = Decimal("0.00")
@@ -1032,7 +1033,7 @@ def reportes():
         activo=True
     ).count()
 
-    total_clientes = Cliente.query.count()
+    total_clientes = Cliente.query.filter_by(activo=True).count()
 
     total_facturas = Factura.query.filter(
         db.or_(
@@ -1077,6 +1078,11 @@ with app.app_context():
 
     # Agregar columnas faltantes sin borrar los datos existentes.
     with db.engine.begin() as conexion:
+        conexion.exec_driver_sql("""
+            ALTER TABLE clientes
+            ADD COLUMN IF NOT EXISTS activo BOOLEAN NOT NULL DEFAULT TRUE
+        """)
+
         conexion.exec_driver_sql("""
             ALTER TABLE productos
             ADD COLUMN IF NOT EXISTS costo NUMERIC(10, 2) NULL
