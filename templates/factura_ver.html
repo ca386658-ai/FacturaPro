@@ -1,707 +1,560 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Factura {{ factura.numero }} | FacturaPro
-    </title>
-
+    <title>Factura {{ factura.numero }} | FacturaPro</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
 
-
         body {
-
             margin: 0;
-
-            padding: 30px;
-
-            font-family: Arial, sans-serif;
-
+            padding: 25px 12px;
             background: #f3f4f6;
-
             color: #111827;
-
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
         }
-
 
         .factura {
-
+            width: 100%;
             max-width: 850px;
-
-            margin: auto;
-
-            background: white;
-
-            padding: 35px;
-
-            border-radius: 12px;
-
-            box-shadow:
-                0 4px 15px
-                rgba(0,0,0,0.10);
-
+            margin: 0 auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.10);
         }
-
 
         .encabezado {
-
             display: flex;
-
-            justify-content:
-                space-between;
-
-            align-items:
-                flex-start;
-
-            border-bottom:
-                2px solid #111827;
-
-            padding-bottom: 20px;
-
-            margin-bottom: 25px;
-
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            padding-bottom: 18px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #111827;
         }
-
 
         .empresa h1 {
-
-            margin: 0;
-
-            font-size: 30px;
-
+            margin: 0 0 6px;
+            font-size: 28px;
         }
 
-
-        .empresa p {
-
-            margin: 5px 0;
-
+        .empresa p,
+        .numero-factura p {
+            margin: 4px 0;
             color: #555;
-
         }
-
 
         .numero-factura {
-
             text-align: right;
-
+            overflow-wrap: anywhere;
         }
-
 
         .numero-factura h2 {
-
-            margin: 0;
-
+            margin: 0 0 8px;
+            font-size: 19px;
         }
-
 
         .cliente {
-
-            margin-bottom: 25px;
-
-            padding: 15px;
-
+            padding: 12px;
+            margin-bottom: 20px;
             background: #f9fafb;
-
-            border-radius: 8px;
-
+            border-radius: 7px;
+            overflow-wrap: anywhere;
         }
 
-
-        .cliente h3 {
-
-            margin-top: 0;
-
+        .cliente h3,
+        .productos-titulo {
+            margin: 0 0 10px;
+            font-size: 16px;
         }
 
+        .cliente p {
+            margin: 5px 0;
+        }
 
         table {
-
             width: 100%;
-
-            border-collapse:
-                collapse;
-
-            margin-top: 20px;
-
+            margin-top: 12px;
+            border-collapse: collapse;
+            table-layout: auto;
         }
-
 
         th {
-
+            padding: 10px 7px;
             background: #111827;
-
             color: white;
-
-            padding: 12px;
-
             text-align: left;
-
+            font-size: 12px;
         }
-
 
         td {
-
-            padding: 12px;
-
-            border-bottom:
-                1px solid #ddd;
-
+            padding: 10px 7px;
+            border-bottom: 1px solid #ddd;
+            overflow-wrap: anywhere;
         }
 
+        .numerico {
+            text-align: right;
+            white-space: nowrap;
+        }
 
         .totales {
-
-            width: 350px;
-
-            margin-left: auto;
-
-            margin-top: 25px;
-
+            width: 100%;
+            max-width: 350px;
+            margin: 22px 0 0 auto;
         }
-
 
         .linea {
-
             display: flex;
-
-            justify-content:
-                space-between;
-
-            padding: 8px 0;
-
+            justify-content: space-between;
+            gap: 12px;
+            padding: 7px 0;
         }
 
+        .linea strong {
+            text-align: right;
+        }
 
         .total {
-
-            border-top:
-                2px solid #111827;
-
-            margin-top: 8px;
-
+            margin-top: 7px;
             padding-top: 12px;
-
-            font-size: 22px;
-
+            border-top: 2px solid #111827;
+            font-size: 20px;
             font-weight: bold;
-
         }
 
+        .gracias {
+            margin: 30px 0 0;
+            text-align: center;
+            color: #555;
+            font-size: 13px;
+        }
+
+        .estado-anulada {
+            margin: 0 0 15px;
+            padding: 10px;
+            border: 2px solid #b91c1c;
+            color: #b91c1c;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+        }
 
         .botones {
-
-            max-width: 850px;
-
-            margin: 20px auto;
-
             display: flex;
-
+            flex-wrap: wrap;
+            justify-content: center;
             gap: 10px;
-
+            max-width: 850px;
+            margin: 20px auto;
         }
-
 
         .btn {
-
-            border: none;
-
             padding: 12px 20px;
-
-            border-radius: 8px;
-
-            cursor: pointer;
-
+            border: 0;
+            border-radius: 7px;
             font-size: 15px;
-
-            text-decoration: none;
-
             font-weight: bold;
-
+            text-decoration: none;
+            cursor: pointer;
         }
-
 
         .btn-imprimir {
-
             background: #2563eb;
-
             color: white;
-
         }
-
 
         .btn-panel {
-
             background: #374151;
-
             color: white;
-
         }
 
+        @page {
+            size: 80mm auto;
+            margin: 3mm;
+        }
 
         @media print {
+            html,
+            body {
+                width: 100%;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #fff !important;
+                color: #000;
+                font-size: 10px;
+            }
 
             body {
-
-                background: white;
-
-                padding: 0;
-
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
-
 
             .factura {
-
-                box-shadow: none;
-
-                border-radius: 0;
-
-                max-width: 100%;
-
-                padding: 20px;
-
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
             }
-
-
-            .botones {
-
-                display: none;
-
-            }
-
-        }
-
-
-        @media (max-width: 700px) {
-
-            body {
-
-                padding: 10px;
-
-            }
-
-
-            .factura {
-
-                padding: 18px;
-
-            }
-
 
             .encabezado {
-
-                flex-direction:
-                    column;
-
-                gap: 15px;
-
+                display: block;
+                padding-bottom: 8px;
+                margin-bottom: 10px;
+                border-bottom: 1px dashed #555;
             }
 
+            .empresa h1 {
+                margin-bottom: 4px;
+                font-size: 20px;
+            }
+
+            .empresa p,
+            .numero-factura p {
+                margin: 3px 0;
+                color: #000;
+                font-size: 10px;
+            }
 
             .numero-factura {
-
+                margin-top: 8px;
                 text-align: left;
-
             }
 
-
-            .totales {
-
-                width: 100%;
-
+            .numero-factura h2 {
+                margin-bottom: 5px;
+                font-size: 13px;
             }
 
+            .cliente {
+                padding: 7px 0;
+                margin-bottom: 12px;
+                background: transparent !important;
+                border-bottom: 1px dashed #555;
+                border-radius: 0;
+            }
+
+            .cliente h3,
+            .productos-titulo {
+                margin-bottom: 6px;
+                font-size: 11px;
+            }
+
+            .cliente p {
+                margin: 4px 0;
+                font-size: 9px;
+            }
 
             table {
-
-                font-size: 13px;
-
+                width: 100%;
+                margin-top: 8px;
+                border-collapse: collapse;
+                table-layout: fixed;
+                font-size: 9px;
             }
 
+            thead {
+                display: table-header-group;
+            }
+
+            tr {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            th {
+                padding: 5px 2px;
+                background: #eee !important;
+                color: #000 !important;
+                border-bottom: 1px solid #555;
+                font-size: 8px;
+            }
+
+            td {
+                padding: 5px 2px;
+                border-bottom: 1px dotted #aaa;
+                font-size: 9px;
+                overflow-wrap: anywhere;
+                white-space: normal;
+            }
+
+            th:first-child,
+            td:first-child {
+                width: 35%;
+                text-align: left;
+            }
+
+            th:nth-child(2),
+            td:nth-child(2) {
+                width: 12%;
+                text-align: center;
+            }
+
+            th:nth-child(3),
+            td:nth-child(3) {
+                width: 18%;
+            }
+
+            th:nth-child(4),
+            td:nth-child(4) {
+                width: 15%;
+            }
+
+            th:nth-child(5),
+            td:nth-child(5) {
+                width: 20%;
+            }
+
+            .numerico {
+                text-align: right;
+                white-space: normal;
+                overflow-wrap: anywhere;
+            }
+
+            .totales {
+                width: 100%;
+                max-width: none;
+                margin-top: 12px;
+            }
+
+            .linea {
+                gap: 5px;
+                padding: 4px 0;
+                font-size: 10px;
+            }
+
+            .linea strong {
+                overflow-wrap: anywhere;
+            }
+
+            .total {
+                margin-top: 5px;
+                padding-top: 8px;
+                border-top: 1px solid #000;
+                font-size: 14px;
+            }
+
+            .gracias {
+                margin-top: 18px;
+                padding-top: 8px;
+                border-top: 1px dashed #555;
+                color: #000;
+                font-size: 9px;
+            }
+
+            .botones,
+            .no-imprimir {
+                display: none !important;
+            }
+
+            .estado-anulada {
+                padding: 6px;
+                margin-bottom: 10px;
+                border: 1px solid #000;
+                color: #000;
+                font-size: 12px;
+            }
         }
 
+        @media screen and (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .factura {
+                padding: 15px;
+            }
+
+            .encabezado {
+                flex-direction: column;
+            }
+
+            .numero-factura {
+                text-align: left;
+            }
+
+            table {
+                font-size: 11px;
+            }
+
+            th,
+            td {
+                padding: 6px 3px;
+            }
+
+            .totales {
+                max-width: none;
+            }
+        }
     </style>
-
 </head>
-
 
 <body>
 
-
 <div class="factura">
 
-
-    <!-- =====================================================
-         ENCABEZADO
-    ====================================================== -->
-
-    <div class="encabezado">
-
-
+    <header class="encabezado">
         <div class="empresa">
-
-            <h1>
-                FacturaPro
-            </h1>
-
-            <p>
-                Gestión Comercial
-            </p>
-
-            <p>
-                Sistema de Facturación
-            </p>
-
+            <h1>FacturaPro</h1>
+            <p>Gestión Comercial</p>
+            <p>Sistema de Facturación</p>
         </div>
-
 
         <div class="numero-factura">
-
-            <h2>
-                {{ factura.numero }}
-            </h2>
-
+            <h2>{{ factura.numero }}</h2>
             <p>
-
                 Fecha:
-
                 {{ factura.fecha.strftime('%d/%m/%Y %H:%M') }}
-
             </p>
-
         </div>
+    </header>
 
-    </div>
+    {% if factura.estado == 'anulada' %}
+        <div class="estado-anulada">
+            FACTURA ANULADA
+            {% if factura.fecha_anulacion %}
+                <br>
+                Fecha de anulación:
+                {{ factura.fecha_anulacion.strftime('%d/%m/%Y %H:%M') }}
+            {% endif %}
+        </div>
+    {% endif %}
 
-
-    <!-- =====================================================
-         CLIENTE
-    ====================================================== -->
-
-    <div class="cliente">
-
-        <h3>
-            👤 Datos del cliente
-        </h3>
-
+    <section class="cliente">
+        <h3>Datos del cliente</h3>
 
         {% if factura.cliente %}
-
             <p>
-
-                <strong>
-                    Nombre:
-                </strong>
-
+                <strong>Nombre:</strong>
                 {{ factura.cliente.nombre }}
-
             </p>
-
 
             {% if factura.cliente.telefono %}
-
                 <p>
-
-                    <strong>
-                        Teléfono:
-                    </strong>
-
+                    <strong>Teléfono:</strong>
                     {{ factura.cliente.telefono }}
-
                 </p>
-
             {% endif %}
-
 
             {% if factura.cliente.correo %}
-
                 <p>
-
-                    <strong>
-                        Correo:
-                    </strong>
-
+                    <strong>Correo:</strong>
                     {{ factura.cliente.correo }}
-
                 </p>
-
             {% endif %}
-
 
             {% if factura.cliente.direccion %}
-
                 <p>
-
-                    <strong>
-                        Dirección:
-                    </strong>
-
+                    <strong>Dirección:</strong>
                     {{ factura.cliente.direccion }}
-
                 </p>
-
             {% endif %}
-
         {% else %}
-
-            <p>
-                Cliente general
-            </p>
-
+            <p>Cliente general</p>
         {% endif %}
+    </section>
 
-    </div>
+    <section>
+        <h3 class="productos-titulo">Productos</h3>
 
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cant.</th>
+                    <th class="numerico">Precio</th>
+                    <th class="numerico">ITBIS</th>
+                    <th class="numerico">Total</th>
+                </tr>
+            </thead>
 
-    <!-- =====================================================
-         PRODUCTOS
-    ====================================================== -->
+            <tbody>
+                {% for detalle in factura.detalles %}
+                    <tr>
+                        <td>{{ detalle.producto.nombre }}</td>
+                        <td>{{ detalle.cantidad }}</td>
+                        <td class="numerico">
+                            RD$ {{ "%.2f"|format(detalle.precio_unitario|float) }}
+                        </td>
+                        <td class="numerico">
+                            RD$ {{ "%.2f"|format(detalle.itbis|float) }}
+                        </td>
+                        <td class="numerico">
+                            RD$ {{ "%.2f"|format(detalle.total|float) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
 
-    <h3>
-        🛒 Productos
-    </h3>
-
-
-    <table>
-
-        <thead>
-
-            <tr>
-
-                <th>
-                    Producto
-                </th>
-
-                <th>
-                    Cantidad
-                </th>
-
-                <th>
-                    Precio
-                </th>
-
-                <th>
-                    ITBIS
-                </th>
-
-                <th>
-                    Total
-                </th>
-
-            </tr>
-
-        </thead>
-
-
-        <tbody>
-
-            {% for detalle in factura.detalles %}
-
-            <tr>
-
-                <td>
-
-                    {{ detalle.producto.nombre }}
-
-                </td>
-
-
-                <td>
-
-                    {{ detalle.cantidad }}
-
-                </td>
-
-
-                <td>
-
-                    ${{ "%.2f"|format(
-                        detalle.precio_unitario|float
-                    ) }}
-
-                </td>
-
-
-                <td>
-
-                    ${{ "%.2f"|format(
-                        detalle.itbis|float
-                    ) }}
-
-                </td>
-
-
-                <td>
-
-                    ${{ "%.2f"|format(
-                        detalle.total|float
-                    ) }}
-
-                </td>
-
-            </tr>
-
-            {% endfor %}
-
-        </tbody>
-
-    </table>
-
-
-    <!-- =====================================================
-         TOTALES
-    ====================================================== -->
-
-    <div class="totales">
-
-
+    <section class="totales">
         <div class="linea">
-
-            <span>
-                Subtotal:
-            </span>
-
+            <span>Subtotal:</span>
             <strong>
-
-                ${{ "%.2f"|format(
-                    factura.subtotal|float
-                ) }}
-
+                RD$ {{ "%.2f"|format(factura.subtotal|float) }}
             </strong>
-
         </div>
 
-
         <div class="linea">
-
-            <span>
-                ITBIS (18%):
-            </span>
-
+            <span>ITBIS:</span>
             <strong>
-
-                ${{ "%.2f"|format(
-                    factura.itbis|float
-                ) }}
-
+                RD$ {{ "%.2f"|format(factura.itbis|float) }}
             </strong>
-
         </div>
-
 
         <div class="linea total">
-
-            <span>
-                Total:
-            </span>
-
+            <span>TOTAL:</span>
             <strong>
-
-                ${{ "%.2f"|format(
-                    factura.total|float
-                ) }}
-
+                RD$ {{ "%.2f"|format(factura.total|float) }}
             </strong>
-
         </div>
+    </section>
 
-    </div>
-
-
-    <p
-        style="
-            text-align:center;
-            margin-top:40px;
-            color:#666;
-        "
-    >
-        Gracias por su compra.
+    <p class="gracias">
+        ¡Gracias por su compra!
     </p>
-
 
 </div>
 
-
-<!-- =====================================================
-     BOTONES
-====================================================== -->
-
 <div class="botones">
-
-
     <button
+        type="button"
         class="btn btn-imprimir"
         onclick="window.print()"
     >
-
-        🖨️ Imprimir factura
-
+        Imprimir factura
     </button>
-
 
     <a
         href="{{ url_for('inicio') }}"
         class="btn btn-panel"
     >
-
-        ← Volver al panel
-
+        Volver al panel
     </a>
-
-
 </div>
 
-
 <script>
+    const parametros = new URLSearchParams(window.location.search);
 
-    // =====================================================
-    // IMPRESIÓN AUTOMÁTICA
-    // =====================================================
-
-    const parametros =
-        new URLSearchParams(
-            window.location.search
-        );
-
-
-    if (
-        parametros.get("imprimir") === "1"
-    ) {
-
-        window.addEventListener(
-            "load",
-            function() {
-
-                setTimeout(
-                    function() {
-
-                        window.print();
-
-                    },
-                    700
-                );
-
-            }
-        );
-
+    if (parametros.get("imprimir") === "1") {
+        window.addEventListener("load", function () {
+            setTimeout(function () {
+                window.print();
+            }, 700);
+        });
     }
-
 </script>
 
-
 </body>
-
 </html>
