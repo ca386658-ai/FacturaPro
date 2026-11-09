@@ -80,7 +80,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 1050px;
+            min-width: 1200px;
         }
 
         th, td {
@@ -116,6 +116,7 @@
         }
 
         .btn-ver,
+        .btn-pagar,
         .btn-anular,
         .btn-reactivar {
             display: inline-block;
@@ -136,6 +137,14 @@
 
         .btn-ver:hover {
             background: #1d4ed8;
+        }
+
+        .btn-pagar {
+            background: #16a34a;
+        }
+
+        .btn-pagar:hover {
+            background: #15803d;
         }
 
         .btn-anular {
@@ -424,8 +433,16 @@
                                     <a
                                         href="{{ url_for('ver_factura', id=factura.id) }}"
                                         class="btn-ver">
-                                        Ver factura
+                                        👁️ Ver factura
                                     </a>
+
+                                    {% if factura.estado != "anulada" and factura.estado_pago != "pagada" %}
+                                        <a
+                                            href="{{ url_for('ver_factura', id=factura.id) }}"
+                                            class="btn-pagar">
+                                            💰 Pagar factura
+                                        </a>
+                                    {% endif %}
 
                                     {% if factura.estado == "anulada" %}
 
