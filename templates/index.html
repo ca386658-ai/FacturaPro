@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FacturaPro | Dashboard</title>
+    <title>FacturaPro | Dashboard Inteligente</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         * {
@@ -24,6 +26,11 @@
             background: #111827;
             padding: 24px 35px;
             border-bottom: 1px solid #263449;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         header h1 {
@@ -35,6 +42,14 @@
         header p {
             color: #94a3b8;
             font-size: 14px;
+        }
+
+        .estado-sistema {
+            background: #123b2b;
+            color: #4ade80;
+            padding: 9px 14px;
+            border-radius: 20px;
+            font-size: 12px;
         }
 
         nav {
@@ -51,7 +66,7 @@
             text-decoration: none;
             font-size: 14px;
             font-weight: bold;
-            transition: 0.2s;
+            transition: .2s;
         }
 
         nav a:hover {
@@ -59,7 +74,7 @@
         }
 
         .contenedor {
-            max-width: 1250px;
+            max-width: 1350px;
             margin: 35px auto;
             padding: 0 25px;
         }
@@ -69,7 +84,17 @@
             border: 1px solid #263b69;
             border-radius: 14px;
             padding: 30px;
-            margin-bottom: 28px;
+            margin-bottom: 30px;
+        }
+
+        .etiqueta {
+            display: inline-block;
+            color: #93c5fd;
+            background: #1e3a8a;
+            padding: 6px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 15px;
         }
 
         .bienvenida h2 {
@@ -83,67 +108,185 @@
             line-height: 1.6;
         }
 
-        .etiqueta {
-            display: inline-block;
-            color: #93c5fd;
-            background: #1e3a8a;
-            padding: 6px 11px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-bottom: 15px;
-        }
-
         .titulo-seccion {
             font-size: 18px;
             margin-bottom: 18px;
             color: white;
         }
 
+        .subtitulo {
+            color: #94a3b8;
+            font-size: 13px;
+            margin-top: -10px;
+            margin-bottom: 18px;
+        }
+
         .tarjetas {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+            margin-bottom: 30px;
         }
 
         .tarjeta {
             background: #151f30;
             border: 1px solid #263449;
             border-radius: 13px;
-            padding: 24px;
-            transition: transform 0.2s, border-color 0.2s;
+            padding: 23px;
+            transition: .2s;
         }
 
         .tarjeta:hover {
-            transform: translateY(-4px);
+            transform: translateY(-3px);
             border-color: #3b82f6;
         }
 
         .tarjeta h3 {
             color: #cbd5e1;
-            font-size: 15px;
+            font-size: 14px;
             margin-bottom: 17px;
         }
 
         .numero {
             color: #60a5fa;
-            font-size: 36px;
+            font-size: 30px;
             font-weight: bold;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+            overflow-wrap: anywhere;
         }
 
         .tarjeta p {
             color: #94a3b8;
-            font-size: 13px;
+            font-size: 12px;
             line-height: 1.5;
         }
 
-        .acciones {
+        .azul .numero { color: #60a5fa; }
+        .verde .numero { color: #4ade80; }
+        .rojo .numero { color: #f87171; }
+        .amarillo .numero { color: #fbbf24; }
+        .morado .numero { color: #c084fc; }
+
+        .seccion {
             margin-top: 35px;
+        }
+
+        .panel {
+            background: #151f30;
+            border: 1px solid #263449;
+            border-radius: 13px;
+            padding: 24px;
+        }
+
+        .grafica-contenedor {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .dos-columnas {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+        }
+
+        .tabla-contenedor {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 520px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 14px 12px;
+            border-bottom: 1px solid #263449;
+            font-size: 13px;
+        }
+
+        th {
+            color: #94a3b8;
+            font-weight: bold;
+        }
+
+        td {
+            color: #e5e7eb;
+        }
+
+        .estado {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .pagada {
+            background: #123b2b;
+            color: #4ade80;
+        }
+
+        .pendiente {
+            background: #49351a;
+            color: #fbbf24;
+        }
+
+        .parcial {
+            background: #1e3a8a;
+            color: #93c5fd;
+        }
+
+        .anulada {
+            background: #49232a;
+            color: #fca5a5;
+        }
+
+        .inventario-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .inventario-item {
+            background: #101827;
+            border: 1px solid #263449;
+            border-radius: 9px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .inventario-item strong {
+            color: white;
+            font-size: 13px;
+        }
+
+        .inventario-item small {
+            display: block;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        .stock-numero {
+            color: #f87171;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .sin-datos {
+            color: #94a3b8;
+            font-size: 13px;
+            padding: 15px 0;
         }
 
         .acciones-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
             gap: 18px;
         }
 
@@ -176,7 +319,6 @@
             text-decoration: none;
             font-size: 13px;
             font-weight: bold;
-            transition: 0.2s;
         }
 
         .boton:hover {
@@ -200,7 +342,13 @@
             border-top: 1px solid #263449;
         }
 
-        @media (max-width: 600px) {
+        @media(max-width: 850px) {
+            .dos-columnas {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 600px) {
             header {
                 padding: 22px 18px;
             }
@@ -224,11 +372,15 @@
             }
 
             .tarjeta {
-                padding: 21px;
+                padding: 20px;
             }
 
             .numero {
-                font-size: 31px;
+                font-size: 27px;
+            }
+
+            .panel {
+                padding: 17px;
             }
         }
     </style>
@@ -237,8 +389,12 @@
 <body>
 
 <header>
-    <h1>FacturaPro</h1>
-    <p>Gestión comercial y facturación</p>
+    <div>
+        <h1>FacturaPro</h1>
+        <p>Gestión comercial y facturación inteligente</p>
+    </div>
+
+    <span class="estado-sistema">● Sistema activo</span>
 </header>
 
 <nav>
@@ -249,52 +405,244 @@
     <a href="{{ url_for('productos') }}">📦 Productos</a>
     <a href="{{ url_for('reportes') }}">📊 Reportes</a>
     <a href="{{ url_for('configuracion') }}">⚙️ Configuración</a>
+    <a href="{{ url_for('logout') }}">🚪 Salir</a>
 </nav>
 
 <main class="contenedor">
 
     <section class="bienvenida">
-        <span class="etiqueta">PANEL DE ADMINISTRACIÓN</span>
+        <span class="etiqueta">DASHBOARD INTELIGENTE</span>
+
         <h2>Bienvenido a FacturaPro</h2>
+
         <p>
-            Administra tu negocio desde un solo lugar.
-            Consulta tus registros y accede rápidamente
-            a las principales herramientas del sistema.
+            Controla las ventas, los cobros, las cuentas pendientes
+            y el inventario de tu negocio desde un solo lugar.
         </p>
     </section>
 
+    <!-- RESUMEN DEL NEGOCIO -->
+
     <h2 class="titulo-seccion">Resumen del negocio</h2>
+
+    <p class="subtitulo">Indicadores generales de FacturaPro.</p>
 
     <section class="tarjetas">
 
-        <div class="tarjeta">
-            <h3>📄 Total de facturas</h3>
+        <div class="tarjeta azul">
+            <h3>📄 Facturas activas</h3>
             <div class="numero">{{ total_facturas }}</div>
-            <p>Facturas registradas en el sistema.</p>
+            <p>Facturas que no están anuladas.</p>
         </div>
 
-        <div class="tarjeta">
-            <h3>👥 Total de clientes</h3>
+        <div class="tarjeta verde">
+            <h3>💰 Ventas del mes</h3>
+            <div class="numero">RD$ {{ "{:,.2f}".format(ventas_mes|default(0)|float) }}</div>
+            <p>Valor de las facturas activas del mes.</p>
+        </div>
+
+        <div class="tarjeta verde">
+            <h3>💵 Dinero cobrado este mes</h3>
+            <div class="numero">RD$ {{ "{:,.2f}".format(cobros_mes|default(0)|float) }}</div>
+            <p>Pagos registrados en las facturas del mes.</p>
+        </div>
+
+        <div class="tarjeta rojo">
+            <h3>⚠️ Cuentas por cobrar</h3>
+            <div class="numero">RD$ {{ "{:,.2f}".format(saldo_pendiente|default(0)|float) }}</div>
+            <p>Dinero que todavía deben los clientes.</p>
+        </div>
+
+        <div class="tarjeta azul">
+            <h3>👥 Clientes</h3>
             <div class="numero">{{ total_clientes }}</div>
-            <p>Clientes registrados en tu negocio.</p>
+            <p>Clientes activos registrados.</p>
         </div>
 
-        <div class="tarjeta">
-            <h3>📦 Total de productos</h3>
+        <div class="tarjeta azul">
+            <h3>📦 Productos</h3>
             <div class="numero">{{ total_productos }}</div>
-            <p>Productos disponibles en el inventario.</p>
+            <p>Productos activos en el inventario.</p>
         </div>
 
     </section>
 
-    <section class="acciones">
+    <!-- CONTROL DE PAGOS -->
+
+    <section class="seccion">
+
+        <h2 class="titulo-seccion">Control de pagos</h2>
+
+        <p class="subtitulo">
+            Estado de las facturas activas según los pagos registrados.
+        </p>
+
+        <div class="tarjetas">
+
+            <div class="tarjeta verde">
+                <h3>✅ Facturas pagadas</h3>
+                <div class="numero">{{ facturas_pagadas }}</div>
+                <p>Facturas cubiertas completamente.</p>
+            </div>
+
+            <div class="tarjeta amarillo">
+                <h3>🕒 Facturas pendientes</h3>
+                <div class="numero">{{ facturas_pendientes }}</div>
+                <p>Facturas sin pagos registrados.</p>
+            </div>
+
+            <div class="tarjeta azul">
+                <h3>💳 Abonos parciales</h3>
+                <div class="numero">{{ facturas_parciales }}</div>
+                <p>Facturas con pagos incompletos.</p>
+            </div>
+
+            <div class="tarjeta morado">
+                <h3>🧾 Facturas este mes</h3>
+                <div class="numero">{{ facturas_mes }}</div>
+                <p>Facturas emitidas durante este mes.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- GRÁFICA -->
+
+    <section class="seccion">
+
+        <h2 class="titulo-seccion">📈 Estadísticas de ventas</h2>
+
+        <p class="subtitulo">
+            Evolución de las ventas durante los últimos siete días.
+        </p>
+
+        <div class="panel">
+            <div class="grafica-contenedor">
+                <canvas id="graficaVentas"></canvas>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- INVENTARIO Y FACTURAS -->
+
+    <section class="seccion">
+
+        <div class="dos-columnas">
+
+            <div>
+                <h2 class="titulo-seccion">⚠️ Alertas de inventario</h2>
+
+                <div class="panel">
+
+                    {% if productos_bajo_stock %}
+
+                        <div class="inventario-lista">
+
+                            {% for producto in productos_bajo_stock %}
+
+                                <div class="inventario-item">
+                                    <div>
+                                        <strong>{{ producto.nombre }}</strong>
+                                        <small>Código: {{ producto.codigo }}</small>
+                                    </div>
+
+                                    <span class="stock-numero">
+                                        {{ producto.stock }} unidades
+                                    </span>
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <p class="sin-datos">
+                            No hay productos con inventario bajo.
+                        </p>
+
+                    {% endif %}
+
+                    <br>
+
+                    <a href="{{ url_for('productos') }}" class="boton">
+                        Administrar inventario →
+                    </a>
+
+                </div>
+            </div>
+
+            <div>
+                <h2 class="titulo-seccion">📄 Últimas facturas</h2>
+
+                <div class="panel">
+
+                    {% if ultimas_facturas %}
+
+                        <div class="inventario-lista">
+
+                            {% for factura in ultimas_facturas %}
+
+                                <div class="inventario-item">
+                                    <div>
+                                        <strong>{{ factura.numero }}</strong>
+
+                                        <small>
+                                            {{ factura.fecha.strftime('%d/%m/%Y') }}
+                                        </small>
+
+                                        <small>
+                                            RD$ {{ "{:,.2f}".format(factura.total|float) }}
+                                        </small>
+                                    </div>
+
+                                    {% if factura.estado == 'anulada' %}
+                                        <span class="estado anulada">Anulada</span>
+                                    {% elif factura.estado_pago == 'pagada' %}
+                                        <span class="estado pagada">Pagada</span>
+                                    {% elif factura.estado_pago == 'parcial' %}
+                                        <span class="estado parcial">Parcial</span>
+                                    {% else %}
+                                        <span class="estado pendiente">Pendiente</span>
+                                    {% endif %}
+                                </div>
+
+                                <a href="{{ url_for('ver_factura', id=factura.id) }}"
+                                   class="boton">
+                                    Consultar factura →
+                                </a>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <p class="sin-datos">
+                            Todavía no hay facturas registradas.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ACCESOS RÁPIDOS -->
+
+    <section class="seccion">
+
         <h2 class="titulo-seccion">Accesos rápidos</h2>
 
         <div class="acciones-grid">
 
             <div class="accion">
                 <h3>🧾 Crear factura</h3>
-                <p>Registra una nueva venta y genera una factura para tu cliente.</p>
+                <p>Registra una nueva venta para tus clientes.</p>
                 <a href="{{ url_for('nueva_factura') }}" class="boton">
                     Nueva factura →
                 </a>
@@ -302,31 +650,31 @@
 
             <div class="accion">
                 <h3>📄 Consultar facturas</h3>
-                <p>Revisa las facturas registradas y consulta sus detalles.</p>
+                <p>Revisa tus facturas y controla sus pagos.</p>
                 <a href="{{ url_for('facturas') }}" class="boton">
                     Ver facturas →
                 </a>
             </div>
 
             <div class="accion">
-                <h3>👥 Administrar clientes</h3>
-                <p>Consulta y administra la información de tus clientes.</p>
+                <h3>👥 Clientes</h3>
+                <p>Administra los datos de tus clientes.</p>
                 <a href="{{ url_for('clientes') }}" class="boton">
                     Ver clientes →
                 </a>
             </div>
 
             <div class="accion">
-                <h3>📦 Control de inventario</h3>
-                <p>Administra tus productos, precios y existencias.</p>
+                <h3>📦 Inventario</h3>
+                <p>Controla productos, precios y existencias.</p>
                 <a href="{{ url_for('productos') }}" class="boton">
                     Ver productos →
                 </a>
             </div>
 
             <div class="accion">
-                <h3>📊 Reportes del negocio</h3>
-                <p>Consulta los resultados y la información general de tu negocio.</p>
+                <h3>📊 Reportes</h3>
+                <p>Consulta los resultados financieros del negocio.</p>
                 <a href="{{ url_for('reportes') }}" class="boton">
                     Ver reportes →
                 </a>
@@ -334,20 +682,91 @@
 
             <div class="accion">
                 <h3>⚙️ Configuración</h3>
-                <p>Accede a las opciones de configuración del sistema.</p>
+                <p>Accede a las opciones del sistema.</p>
                 <a href="{{ url_for('configuracion') }}" class="boton boton-rojo">
                     Configuración →
                 </a>
             </div>
 
         </div>
+
     </section>
 
 </main>
 
 <footer>
-    FacturaPro © 2026 | Sistema de gestión y facturación
+    FacturaPro © 2026 | Sistema inteligente de gestión y facturación
 </footer>
+
+<script>
+    const etiquetas = {{ ventas_labels_json | safe }};
+    const valores = {{ ventas_datos_json | safe }};
+
+    const contexto = document.getElementById("graficaVentas");
+
+    new Chart(contexto, {
+        type: "line",
+
+        data: {
+            labels: etiquetas,
+
+            datasets: [{
+                label: "Ventas en RD$",
+                data: valores,
+
+                borderColor: "#3b82f6",
+                backgroundColor: "rgba(59,130,246,0.15)",
+
+                borderWidth: 3,
+                fill: true,
+                tension: 0.35,
+
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "#cbd5e1"
+                    }
+                }
+            },
+
+            scales: {
+                x: {
+                    ticks: {
+                        color: "#94a3b8"
+                    },
+                    grid: {
+                        color: "#263449"
+                    }
+                },
+
+                y: {
+                    beginAtZero: true,
+
+                    ticks: {
+                        color: "#94a3b8",
+
+                        callback: function(valor) {
+                            return "RD$ " + valor.toLocaleString("es-DO");
+                        }
+                    },
+
+                    grid: {
+                        color: "#263449"
+                    }
+                }
+            }
+        }
+    });
+</script>
 
 </body>
 </html>
