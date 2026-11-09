@@ -146,21 +146,100 @@
             overflow-wrap: anywhere;
         }
 
-        .botones {
+        .estado-pago {
+            margin: 20px 0;
+            padding: 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #f9fafb;
+        }
+
+        .estado-pago h3 {
+            margin: 0 0 12px;
+        }
+
+        .estado-etiqueta {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .pagada {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .pendiente {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .parcial {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .resumen-pago {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .dato-pago {
+            padding: 12px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 7px;
+        }
+
+        .dato-pago span {
+            display: block;
+            margin-bottom: 6px;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .dato-pago strong {
+            font-size: 16px;
+            overflow-wrap: anywhere;
+        }
+
+        .acciones-pago {
             display: flex;
             flex-wrap: wrap;
-            justify-content: center;
             gap: 10px;
-            margin: 20px auto;
+            margin-top: 15px;
+        }
+
+        .form-abono {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .form-abono input {
+            flex: 1;
+            min-width: 150px;
+            padding: 11px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
         }
 
         .btn {
+            display: inline-block;
             padding: 12px 20px;
             border: 0;
             border-radius: 7px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             text-decoration: none;
+            text-align: center;
             cursor: pointer;
         }
 
@@ -172,6 +251,24 @@
         .btn-panel {
             background: #374151;
             color: white;
+        }
+
+        .btn-abono {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-pagada {
+            background: #15803d;
+            color: white;
+        }
+
+        .botones {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px auto;
         }
 
         @page {
@@ -353,6 +450,50 @@
                 font-size: 8pt;
             }
 
+            .estado-pago {
+                margin: 10px 0;
+                padding: 7px 0;
+                border: 0;
+                border-top: 1px dashed black;
+                border-radius: 0;
+                background: white;
+            }
+
+            .estado-pago h3 {
+                font-size: 9pt;
+            }
+
+            .estado-etiqueta {
+                padding: 0;
+                background: white !important;
+                color: black !important;
+                font-size: 8pt;
+            }
+
+            .resumen-pago {
+                display: block;
+            }
+
+            .dato-pago {
+                display: flex;
+                justify-content: space-between;
+                padding: 3px 0;
+                border: 0;
+                border-radius: 0;
+                font-size: 8pt;
+            }
+
+            .dato-pago span {
+                margin: 0;
+                color: black;
+            }
+
+            .dato-pago strong {
+                font-size: 8pt;
+            }
+
+            .acciones-pago,
+            .form-abono,
             .botones,
             .no-imprimir {
                 display: none !important;
@@ -395,6 +536,10 @@
             th,
             td {
                 padding: 6px 3px;
+            }
+
+            .resumen-pago {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -507,11 +652,90 @@
         </div>
     </section>
 
+    <!-- CONTROL DE PAGOS -->
+    <section class="estado-pago">
+
+        <h3>Control de pagos</h3>
+
+        {% if factura.estado_pago == 'pagada' %}
+            <span class="estado-etiqueta pagada">PAGADA</span>
+        {% elif factura.estado_pago == 'parcial' %}
+            <span class="estado-etiqueta parcial">PAGO PARCIAL</span>
+        {% else %}
+            <span class="estado-etiqueta pendiente">PENDIENTE DE PAGO</span>
+        {% endif %}
+
+        <div class="resumen-pago">
+
+            <div class="dato-pago">
+                <span>Total de factura</span>
+                <strong>
+                    RD$ {{ "%.2f"|format(factura.total|float) }}
+                </strong>
+            </div>
+
+            <div class="dato-pago">
+                <span>Dinero recibido</span>
+                <strong>
+                    RD$ {{ "%.2f"|format((factura.monto_pagado or 0)|float) }}
+                </strong>
+            </div>
+
+            <div class="dato-pago">
+                <span>Saldo pendiente</span>
+                <strong>
+                    RD$ {{ "%.2f"|format((factura.saldo_pendiente or 0)|float) }}
+                </strong>
+            </div>
+
+        </div>
+
+        {% if factura.estado != 'anulada' and factura.estado_pago != 'pagada' %}
+
+            <div class="acciones-pago no-imprimir">
+
+                <form
+                    class="form-abono"
+                    method="POST"
+                    action="{{ url_for('registrar_pago', factura_id=factura.id) }}"
+                >
+                    <input
+                        type="number"
+                        name="monto"
+                        min="0.01"
+                        max="{{ factura.saldo_pendiente }}"
+                        step="0.01"
+                        placeholder="Cantidad del abono (RD$)"
+                        required
+                    >
+
+                    <button type="submit" class="btn btn-abono">
+                        Registrar abono
+                    </button>
+                </form>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('marcar_factura_pagada', factura_id=factura.id) }}"
+                    onsubmit="return confirm('¿Confirmas que esta factura fue pagada completamente?');"
+                >
+                    <button type="submit" class="btn btn-pagada">
+                        Marcar como pagada
+                    </button>
+                </form>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
     <p class="gracias">¡Gracias por su compra!</p>
 
 </div>
 
-<div class="botones">
+<div class="botones no-imprimir">
+
     <button
         type="button"
         class="btn btn-imprimir"
@@ -523,6 +747,7 @@
     <a href="{{ url_for('inicio') }}" class="btn btn-panel">
         Volver al panel
     </a>
+
 </div>
 
 <script>
