@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -25,9 +26,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
-        header h1 { font-size: 24px; }
+        header h1 {
+            font-size: 24px;
+        }
 
         header a {
             color: white;
@@ -38,7 +43,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 30px auto;
             padding: 0 20px;
         }
@@ -68,15 +73,18 @@
             font-weight: bold;
         }
 
-        .table-container { overflow-x: auto; }
+        .table-container {
+            overflow-x: auto;
+        }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 1050px;
         }
 
         th, td {
-            padding: 14px;
+            padding: 13px 10px;
             border-bottom: 1px solid #e5e7eb;
             text-align: left;
         }
@@ -84,6 +92,11 @@
         th {
             background: #f3f4f6;
             white-space: nowrap;
+            font-size: 13px;
+        }
+
+        td {
+            font-size: 13px;
         }
 
         .numero {
@@ -91,7 +104,9 @@
             color: #2563eb;
         }
 
-        .total { font-weight: bold; }
+        .total {
+            font-weight: bold;
+        }
 
         .acciones {
             display: flex;
@@ -100,46 +115,56 @@
             flex-wrap: wrap;
         }
 
-        .btn-ver {
+        .btn-ver,
+        .btn-anular,
+        .btn-reactivar {
             display: inline-block;
-            background: #2563eb;
             color: white;
             text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 7px;
-            font-size: 14px;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        .form-anular, .form-reactivar {
-            display: inline;
-            margin: 0;
-        }
-
-        .btn-anular, .btn-reactivar {
-            display: inline-block;
-            color: white;
             border: none;
             padding: 8px 12px;
             border-radius: 7px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             cursor: pointer;
             white-space: nowrap;
         }
 
-        .btn-anular { background: #dc2626; }
-        .btn-anular:hover { background: #b91c1c; }
+        .btn-ver {
+            background: #2563eb;
+        }
 
-        .btn-reactivar { background: #15803d; }
-        .btn-reactivar:hover { background: #166534; }
+        .btn-ver:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-anular {
+            background: #dc2626;
+        }
+
+        .btn-anular:hover {
+            background: #b91c1c;
+        }
+
+        .btn-reactivar {
+            background: #15803d;
+        }
+
+        .btn-reactivar:hover {
+            background: #166534;
+        }
+
+        .form-anular,
+        .form-reactivar {
+            display: inline;
+            margin: 0;
+        }
 
         .estado {
             display: inline-block;
             padding: 6px 9px;
             border-radius: 6px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             white-space: nowrap;
         }
@@ -152,6 +177,21 @@
         .estado-anulada {
             color: #991b1b;
             background: #fee2e2;
+        }
+
+        .pago-pagada {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .pago-pendiente {
+            color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .pago-parcial {
+            color: #92400e;
+            background: #fef3c7;
         }
 
         .mensaje {
@@ -177,23 +217,52 @@
             color: #6b7280;
         }
 
-        @media (max-width: 600px) {
+        .resumen {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .resumen-card {
+            padding: 17px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 9px;
+        }
+
+        .resumen-card span {
+            display: block;
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .resumen-card strong {
+            font-size: 20px;
+        }
+
+        @media (max-width: 700px) {
             header {
                 padding: 16px;
-                gap: 12px;
-                flex-wrap: wrap;
             }
 
-            header h1 { font-size: 20px; }
+            header h1 {
+                font-size: 20px;
+            }
 
             .container {
                 margin: 20px auto;
                 padding: 0 10px;
             }
 
-            .card { padding: 15px; }
+            .card {
+                padding: 15px;
+            }
 
-            th, td { padding: 10px; }
+            .resumen {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -211,13 +280,11 @@
         <div class="top">
             <h2>Facturas registradas</h2>
 
-            <a href="{{ url_for('nueva_factura') }}"
-               class="btn-nueva">
+            <a href="{{ url_for('nueva_factura') }}" class="btn-nueva">
                 + Nueva factura
             </a>
         </div>
 
-        <!-- MENSAJES DEL SISTEMA -->
         {% with mensajes = get_flashed_messages(with_categories=true) %}
             {% for categoria, mensaje in mensajes %}
                 <div class="mensaje {{ categoria }}">
@@ -228,125 +295,187 @@
 
         {% if facturas %}
 
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Número</th>
-                        <th>Fecha</th>
-                        <th>Cliente</th>
-                        <th>Subtotal</th>
-                        <th>ITBIS</th>
-                        <th>Total</th>
-                        <th>Estado</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
+            {% set total_cobrado = namespace(valor=0) %}
+            {% set total_pendiente = namespace(valor=0) %}
+            {% set total_ventas = namespace(valor=0) %}
 
-                <tbody>
-                    {% for factura in facturas %}
-                    <tr>
-                        <td class="numero">
-                            {{ factura.numero }}
-                        </td>
+            {% for factura in facturas %}
+                {% if factura.estado != 'anulada' %}
+                    {% set total_ventas.valor = total_ventas.valor + (factura.total|float) %}
+                    {% set total_cobrado.valor = total_cobrado.valor + ((factura.monto_pagado or 0)|float) %}
+                    {% set total_pendiente.valor = total_pendiente.valor + ((factura.saldo_pendiente or 0)|float) %}
+                {% endif %}
+            {% endfor %}
 
-                        <td>
-                            {{ factura.fecha.strftime('%d/%m/%Y %H:%M') }}
-                        </td>
+            <div class="resumen">
 
-                        <td>
-                            {% if factura.cliente %}
-                                {{ factura.cliente.nombre }}
-                            {% else %}
-                                Consumidor final
-                            {% endif %}
-                        </td>
+                <div class="resumen-card">
+                    <span>Total de ventas activas</span>
+                    <strong>
+                        RD$ {{ "%.2f"|format(total_ventas.valor) }}
+                    </strong>
+                </div>
 
-                        <td>
-                            ${{ "%.2f"|format(factura.subtotal) }}
-                        </td>
+                <div class="resumen-card">
+                    <span>Dinero recibido</span>
+                    <strong>
+                        RD$ {{ "%.2f"|format(total_cobrado.valor) }}
+                    </strong>
+                </div>
 
-                        <td>
-                            ${{ "%.2f"|format(factura.itbis) }}
-                        </td>
+                <div class="resumen-card">
+                    <span>Dinero pendiente</span>
+                    <strong>
+                        RD$ {{ "%.2f"|format(total_pendiente.valor) }}
+                    </strong>
+                </div>
 
-                        <td class="total">
-                            ${{ "%.2f"|format(factura.total) }}
-                        </td>
+            </div>
 
-                        <!-- ESTADO DE LA FACTURA -->
-                        <td>
-                            {% if factura.estado == "anulada" %}
-                                <span class="estado estado-anulada">
-                                    Anulada
-                                </span>
-                            {% else %}
-                                <span class="estado estado-activa">
-                                    Activa
-                                </span>
-                            {% endif %}
-                        </td>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Subtotal</th>
+                            <th>ITBIS</th>
+                            <th>Total</th>
+                            <th>Recibido</th>
+                            <th>Saldo</th>
+                            <th>Estado factura</th>
+                            <th>Estado pago</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
 
-                        <!-- ACCIONES -->
-                        <td>
-                            <div class="acciones">
+                    <tbody>
+                        {% for factura in facturas %}
+                        <tr>
 
-                                <a
-                                    href="{{ url_for('ver_factura', id=factura.id) }}"
-                                    class="btn-ver">
-                                    👁️ Ver factura
-                                </a>
+                            <td class="numero">
+                                {{ factura.numero }}
+                            </td>
 
-                                {% if factura.estado == "anulada" %}
+                            <td>
+                                {{ factura.fecha.strftime('%d/%m/%Y %H:%M') }}
+                            </td>
 
-                                    <!-- REACTIVAR FACTURA -->
-                                    <form
-                                        method="POST"
-                                        action="{{ url_for('reactivar_factura', id=factura.id) }}"
-                                        class="form-reactivar"
-                                        onsubmit="return confirm('¿Seguro que deseas reactivar esta factura? Se descontarán los productos del inventario.');">
-
-                                        <button
-                                            type="submit"
-                                            class="btn-reactivar">
-                                            ✅ Reactivar
-                                        </button>
-                                    </form>
-
+                            <td>
+                                {% if factura.cliente %}
+                                    {{ factura.cliente.nombre }}
                                 {% else %}
-
-                                    <!-- ANULAR FACTURA -->
-                                    <form
-                                        method="POST"
-                                        action="{{ url_for('anular_factura', id=factura.id) }}"
-                                        class="form-anular"
-                                        onsubmit="return confirm('¿Seguro que deseas anular esta factura? Se devolverán los productos al inventario.');">
-
-                                        <button
-                                            type="submit"
-                                            class="btn-anular">
-                                            🚫 Anular
-                                        </button>
-                                    </form>
-
+                                    Consumidor final
                                 {% endif %}
+                            </td>
 
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                            <td>
+                                RD$ {{ "%.2f"|format(factura.subtotal|float) }}
+                            </td>
+
+                            <td>
+                                RD$ {{ "%.2f"|format(factura.itbis|float) }}
+                            </td>
+
+                            <td class="total">
+                                RD$ {{ "%.2f"|format(factura.total|float) }}
+                            </td>
+
+                            <td>
+                                RD$ {{ "%.2f"|format((factura.monto_pagado or 0)|float) }}
+                            </td>
+
+                            <td>
+                                RD$ {{ "%.2f"|format((factura.saldo_pendiente or 0)|float) }}
+                            </td>
+
+                            <td>
+                                {% if factura.estado == "anulada" %}
+                                    <span class="estado estado-anulada">
+                                        Anulada
+                                    </span>
+                                {% else %}
+                                    <span class="estado estado-activa">
+                                        Activa
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if factura.estado_pago == "pagada" %}
+                                    <span class="estado pago-pagada">
+                                        Pagada
+                                    </span>
+                                {% elif factura.estado_pago == "parcial" %}
+                                    <span class="estado pago-parcial">
+                                        Parcial
+                                    </span>
+                                {% else %}
+                                    <span class="estado pago-pendiente">
+                                        Pendiente
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <div class="acciones">
+
+                                    <a
+                                        href="{{ url_for('ver_factura', id=factura.id) }}"
+                                        class="btn-ver">
+                                        Ver factura
+                                    </a>
+
+                                    {% if factura.estado == "anulada" %}
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for('reactivar_factura', id=factura.id) }}"
+                                            class="form-reactivar"
+                                            onsubmit="return confirm('¿Seguro que deseas reactivar esta factura? Se descontarán los productos del inventario.');">
+
+                                            <button
+                                                type="submit"
+                                                class="btn-reactivar">
+                                                Reactivar
+                                            </button>
+                                        </form>
+
+                                    {% else %}
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for('anular_factura', id=factura.id) }}"
+                                            class="form-anular"
+                                            onsubmit="return confirm('¿Seguro que deseas anular esta factura? Se devolverán los productos al inventario.');">
+
+                                            <button
+                                                type="submit"
+                                                class="btn-anular">
+                                                Anular
+                                            </button>
+                                        </form>
+
+                                    {% endif %}
+
+                                </div>
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
         {% else %}
 
-        <div class="vacio">
-            <h3>No hay facturas registradas todavía.</h3>
-            <p style="margin-top: 10px;">
-                Crea tu primera factura para verla aquí.
-            </p>
-        </div>
+            <div class="vacio">
+                <h3>No hay facturas registradas todavía.</h3>
+                <p style="margin-top: 10px;">
+                    Crea tu primera factura para verla aquí.
+                </p>
+            </div>
 
         {% endif %}
 
