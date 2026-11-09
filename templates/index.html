@@ -22,8 +22,6 @@
             min-height: 100vh;
         }
 
-        /* ESTRUCTURA PRINCIPAL */
-
         .layout {
             display: flex;
             min-height: 100vh;
@@ -123,7 +121,7 @@
             margin-top: 18px;
         }
 
-        /* CONTENIDO */
+        /* CONTENIDO PRINCIPAL */
 
         .contenido-principal {
             flex: 1;
@@ -201,7 +199,7 @@
             line-height: 1.6;
         }
 
-        /* TITULOS */
+        /* SECCIONES */
 
         .titulo-seccion {
             font-size: 18px;
@@ -268,7 +266,7 @@
         .amarillo .numero { color: #fbbf24; }
         .morado .numero { color: #c084fc; }
 
-        /* GRAFICAS Y PANELES */
+        /* PANELES */
 
         .panel {
             background: #151f30;
@@ -283,13 +281,7 @@
             width: 100%;
         }
 
-        .dos-columnas {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 20px;
-        }
-
-        /* ESTADOS DE FACTURAS */
+        /* ESTADOS */
 
         .estado {
             display: inline-block;
@@ -319,7 +311,7 @@
             color: #fca5a5;
         }
 
-        /* INVENTARIO Y FACTURAS */
+        /* INVENTARIO */
 
         .inventario-lista {
             display: flex;
@@ -361,8 +353,6 @@
             padding: 15px 0;
         }
 
-        /* BOTONES */
-
         .boton {
             display: inline-block;
             background: #2563eb;
@@ -376,14 +366,6 @@
 
         .boton:hover {
             background: #1d4ed8;
-        }
-
-        .boton-rojo {
-            background: #dc2626;
-        }
-
-        .boton-rojo:hover {
-            background: #b91c1c;
         }
 
         /* PIE DE PAGINA */
@@ -408,16 +390,11 @@
             .contenedor {
                 padding: 0 20px;
             }
-
-            .dos-columnas {
-                grid-template-columns: 1fr;
-            }
         }
 
         /* CELULARES */
 
         @media(max-width: 650px) {
-
             .layout {
                 flex-direction: column;
             }
@@ -615,6 +592,7 @@
             <!-- BIENVENIDA -->
 
             <section class="bienvenida">
+
                 <span class="etiqueta">DASHBOARD INTELIGENTE</span>
 
                 <h2>Bienvenido a FacturaPro</h2>
@@ -623,6 +601,7 @@
                     Controla las ventas, los cobros, las cuentas pendientes
                     y el inventario de tu negocio desde un solo lugar.
                 </p>
+
             </section>
 
             <!-- RESUMEN DEL NEGOCIO -->
@@ -716,9 +695,10 @@
                     </div>
 
                 </div>
+
             </section>
 
-            <!-- GRÁFICA -->
+            <!-- GRAFICA DE VENTAS -->
 
             <section class="seccion">
 
@@ -736,123 +716,55 @@
 
             </section>
 
-            <!-- INVENTARIO Y FACTURAS -->
+            <!-- ALERTAS DE INVENTARIO: SE CONSERVA -->
 
             <section class="seccion">
 
-                <div class="dos-columnas">
+                <h2 class="titulo-seccion">
+                    ⚠️ Alertas de inventario
+                </h2>
 
-                    <div>
-                        <h2 class="titulo-seccion">
-                            ⚠️ Alertas de inventario
-                        </h2>
+                <div class="panel">
 
-                        <div class="panel">
+                    {% if productos_bajo_stock %}
 
-                            {% if productos_bajo_stock %}
+                        <div class="inventario-lista">
 
-                                <div class="inventario-lista">
+                            {% for producto in productos_bajo_stock %}
 
-                                    {% for producto in productos_bajo_stock %}
+                                <div class="inventario-item">
 
-                                        <div class="inventario-item">
-                                            <div>
-                                                <strong>{{ producto.nombre }}</strong>
-                                                <small>
-                                                    Código: {{ producto.codigo }}
-                                                </small>
-                                            </div>
+                                    <div>
+                                        <strong>{{ producto.nombre }}</strong>
 
-                                            <span class="stock-numero">
-                                                {{ producto.stock }} unidades
-                                            </span>
-                                        </div>
+                                        <small>
+                                            Código: {{ producto.codigo }}
+                                        </small>
+                                    </div>
 
-                                    {% endfor %}
+                                    <span class="stock-numero">
+                                        {{ producto.stock }} unidades
+                                    </span>
 
                                 </div>
 
-                            {% else %}
-
-                                <p class="sin-datos">
-                                    No hay productos con inventario bajo.
-                                </p>
-
-                            {% endif %}
-
-                            <br>
-
-                            <a href="{{ url_for('productos') }}" class="boton">
-                                Administrar inventario →
-                            </a>
+                            {% endfor %}
 
                         </div>
-                    </div>
 
-                    <div>
-                        <h2 class="titulo-seccion">
-                            📄 Últimas facturas
-                        </h2>
+                    {% else %}
 
-                        <div class="panel">
+                        <p class="sin-datos">
+                            No hay productos con inventario bajo.
+                        </p>
 
-                            {% if ultimas_facturas %}
+                    {% endif %}
 
-                                <div class="inventario-lista">
+                    <br>
 
-                                    {% for factura in ultimas_facturas %}
-
-                                        <div class="inventario-item">
-                                            <div>
-                                                <strong>{{ factura.numero }}</strong>
-
-                                                <small>
-                                                    {{ factura.fecha.strftime('%d/%m/%Y') }}
-                                                </small>
-
-                                                <small>
-                                                    RD$ {{ "{:,.2f}".format(factura.total|float) }}
-                                                </small>
-                                            </div>
-
-                                            {% if factura.estado == 'anulada' %}
-                                                <span class="estado anulada">
-                                                    Anulada
-                                                </span>
-                                            {% elif factura.estado_pago == 'pagada' %}
-                                                <span class="estado pagada">
-                                                    Pagada
-                                                </span>
-                                            {% elif factura.estado_pago == 'parcial' %}
-                                                <span class="estado parcial">
-                                                    Parcial
-                                                </span>
-                                            {% else %}
-                                                <span class="estado pendiente">
-                                                    Pendiente
-                                                </span>
-                                            {% endif %}
-                                        </div>
-
-                                        <a href="{{ url_for('ver_factura', id=factura.id) }}"
-                                           class="boton">
-                                            Consultar factura →
-                                        </a>
-
-                                    {% endfor %}
-
-                                </div>
-
-                            {% else %}
-
-                                <p class="sin-datos">
-                                    Todavía no hay facturas registradas.
-                                </p>
-
-                            {% endif %}
-
-                        </div>
-                    </div>
+                    <a href="{{ url_for('productos') }}" class="boton">
+                        Administrar inventario →
+                    </a>
 
                 </div>
 
@@ -868,74 +780,99 @@
 
 </div>
 
+<!-- GRAFICA -->
+
 <script>
+
     const etiquetas = {{ ventas_labels_json | safe }};
     const valores = {{ ventas_datos_json | safe }};
 
     const contexto = document.getElementById("graficaVentas");
 
     new Chart(contexto, {
+
         type: "line",
 
         data: {
             labels: etiquetas,
 
             datasets: [{
+
                 label: "Ventas en RD$",
+
                 data: valores,
 
                 borderColor: "#3b82f6",
+
                 backgroundColor: "rgba(59,130,246,0.15)",
 
                 borderWidth: 3,
+
                 fill: true,
+
                 tension: 0.35,
 
                 pointRadius: 5,
+
                 pointHoverRadius: 7
+
             }]
         },
 
         options: {
+
             responsive: true,
+
             maintainAspectRatio: false,
 
             plugins: {
+
                 legend: {
                     labels: {
                         color: "#cbd5e1"
                     }
                 }
+
             },
 
             scales: {
+
                 x: {
                     ticks: {
                         color: "#94a3b8"
                     },
+
                     grid: {
                         color: "#263449"
                     }
                 },
 
                 y: {
+
                     beginAtZero: true,
 
                     ticks: {
+
                         color: "#94a3b8",
 
                         callback: function(valor) {
                             return "RD$ " + valor.toLocaleString("es-DO");
                         }
+
                     },
 
                     grid: {
                         color: "#263449"
                     }
+
                 }
+
             }
+
         }
+
     });
+
 </script>
 
 </body>
