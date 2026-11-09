@@ -73,6 +73,83 @@
             font-weight: bold;
         }
 
+        /* BUSCADOR INTELIGENTE */
+
+        .buscador {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 22px;
+        }
+
+        .buscador h3 {
+            margin-bottom: 15px;
+            font-size: 17px;
+            color: #111827;
+        }
+
+        .filtros {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .campo label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            color: #374151;
+            margin-bottom: 7px;
+        }
+
+        .campo input,
+        .campo select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+
+        .campo input:focus,
+        .campo select:focus {
+            border-color: #2563eb;
+        }
+
+        .btn-limpiar {
+            background: #374151;
+            color: white;
+            border: none;
+            padding: 11px 15px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-limpiar:hover {
+            background: #1f2937;
+        }
+
+        .resultado-busqueda {
+            margin-top: 13px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        .sin-resultados {
+            display: none;
+            text-align: center;
+            padding: 35px 15px;
+            color: #6b7280;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
         .table-container {
             overflow-x: auto;
         }
@@ -251,6 +328,12 @@
             font-size: 20px;
         }
 
+        @media (max-width: 850px) {
+            .filtros {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
         @media (max-width: 700px) {
             header {
                 padding: 16px;
@@ -270,6 +353,10 @@
             }
 
             .resumen {
+                grid-template-columns: 1fr;
+            }
+
+            .filtros {
                 grid-template-columns: 1fr;
             }
         }
@@ -341,6 +428,66 @@
 
             </div>
 
+            <!-- BUSCADOR INTELIGENTE -->
+
+            <div class="buscador">
+
+                <h3>🔎 Buscar y filtrar facturas</h3>
+
+                <div class="filtros">
+
+                    <div class="campo">
+                        <label for="buscarFactura">
+                            Número de factura o nombre del cliente
+                        </label>
+
+                        <input
+                            type="text"
+                            id="buscarFactura"
+                            placeholder="Ejemplo: FAC-000010 o Juan..."
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="filtroEstado">
+                            Estado de la factura
+                        </label>
+
+                        <select id="filtroEstado">
+                            <option value="todas">Todas las facturas</option>
+                            <option value="pagada">Pagadas</option>
+                            <option value="pendiente">Pendientes</option>
+                            <option value="parcial">Pagos parciales</option>
+                            <option value="anulada">Anuladas</option>
+                        </select>
+                    </div>
+
+                    <div class="campo">
+                        <label for="filtroFecha">
+                            Buscar por fecha
+                        </label>
+
+                        <input
+                            type="date"
+                            id="filtroFecha"
+                        >
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn-limpiar"
+                        id="limpiarFiltros">
+                        Limpiar
+                    </button>
+
+                </div>
+
+                <div class="resultado-busqueda" id="resultadoBusqueda">
+                    Mostrando todas las facturas.
+                </div>
+
+            </div>
+
             <div class="table-container">
                 <table>
                     <thead>
@@ -359,9 +506,18 @@
                         </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody id="tablaFacturas">
+
                         {% for factura in facturas %}
-                        <tr>
+
+                        <tr
+                            class="fila-factura"
+                            data-numero="{{ factura.numero|lower }}"
+                            data-cliente="{% if factura.cliente %}{{ factura.cliente.nombre|lower }}{% else %}consumidor final{% endif %}"
+                            data-estado="{{ factura.estado }}"
+                            data-pago="{{ factura.estado_pago or 'pendiente' }}"
+                            data-fecha="{{ factura.fecha.strftime('%Y-%m-%d') }}"
+                        >
 
                             <td class="numero">
                                 {{ factura.numero }}
@@ -480,9 +636,18 @@
                             </td>
 
                         </tr>
+
                         {% endfor %}
+
                     </tbody>
                 </table>
+            </div>
+
+            <div class="sin-resultados" id="sinResultados">
+                <h3>No se encontraron facturas.</h3>
+                <p style="margin-top: 8px;">
+                    Intenta cambiar la búsqueda o los filtros.
+                </p>
             </div>
 
         {% else %}
@@ -498,6 +663,113 @@
 
     </div>
 </div>
+
+<script>
+    const buscarFactura = document.getElementById("buscarFactura");
+    const filtroEstado = document.getElementById("filtroEstado");
+    const filtroFecha = document.getElementById("filtroFecha");
+    const limpiarFiltros = document.getElementById("limpiarFiltros");
+    const resultadoBusqueda = document.getElementById("resultadoBusqueda");
+    const sinResultados = document.getElementById("sinResultados");
+
+    const filas = document.querySelectorAll(".fila-factura");
+
+    function normalizarTexto(texto) {
+        return texto
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .trim();
+    }
+
+    function aplicarFiltros() {
+
+        const texto = normalizarTexto(buscarFactura.value);
+        const estado = filtroEstado.value;
+        const fecha = filtroFecha.value;
+
+        let cantidadVisible = 0;
+
+        filas.forEach(function(fila) {
+
+            const numero = normalizarTexto(fila.dataset.numero);
+            const cliente = normalizarTexto(fila.dataset.cliente);
+            const estadoFactura = fila.dataset.estado;
+            const estadoPago = fila.dataset.pago;
+            const fechaFactura = fila.dataset.fecha;
+
+            const coincideTexto =
+                numero.includes(texto) ||
+                cliente.includes(texto);
+
+            const coincideFecha =
+                fecha === "" || fechaFactura === fecha;
+
+            let coincideEstado = true;
+
+            if (estado === "pagada") {
+                coincideEstado =
+                    estadoFactura !== "anulada" &&
+                    estadoPago === "pagada";
+            }
+
+            else if (estado === "pendiente") {
+                coincideEstado =
+                    estadoFactura !== "anulada" &&
+                    estadoPago !== "pagada" &&
+                    estadoPago !== "parcial";
+            }
+
+            else if (estado === "parcial") {
+                coincideEstado =
+                    estadoFactura !== "anulada" &&
+                    estadoPago === "parcial";
+            }
+
+            else if (estado === "anulada") {
+                coincideEstado = estadoFactura === "anulada";
+            }
+
+            const mostrar =
+                coincideTexto &&
+                coincideFecha &&
+                coincideEstado;
+
+            fila.style.display = mostrar ? "" : "none";
+
+            if (mostrar) {
+                cantidadVisible++;
+            }
+
+        });
+
+        resultadoBusqueda.textContent =
+            "Mostrando " + cantidadVisible +
+            " de " + filas.length + " facturas.";
+
+        if (cantidadVisible === 0) {
+            sinResultados.style.display = "block";
+        } else {
+            sinResultados.style.display = "none";
+        }
+    }
+
+    buscarFactura.addEventListener("input", aplicarFiltros);
+    filtroEstado.addEventListener("change", aplicarFiltros);
+    filtroFecha.addEventListener("change", aplicarFiltros);
+
+    limpiarFiltros.addEventListener("click", function() {
+
+        buscarFactura.value = "";
+        filtroEstado.value = "todas";
+        filtroFecha.value = "";
+
+        aplicarFiltros();
+
+    });
+
+    aplicarFiltros();
+</script>
 
 </body>
 </html>
