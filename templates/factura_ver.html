@@ -694,10 +694,11 @@
 
             <div class="acciones-pago no-imprimir">
 
+                <!-- REGISTRAR ABONO -->
                 <form
                     class="form-abono"
                     method="POST"
-                    action="{{ url_for('registrar_pago', factura_id=factura.id) }}"
+                    action="{{ url_for('pagar_factura', id=factura.id) }}"
                 >
                     <input
                         type="number"
@@ -714,9 +715,10 @@
                     </button>
                 </form>
 
+                <!-- MARCAR FACTURA COMO PAGADA -->
                 <form
                     method="POST"
-                    action="{{ url_for('marcar_factura_pagada', factura_id=factura.id) }}"
+                    action="{{ url_for('marcar_pagada', id=factura.id) }}"
                     onsubmit="return confirm('¿Confirmas que esta factura fue pagada completamente?');"
                 >
                     <button type="submit" class="btn btn-pagada">
