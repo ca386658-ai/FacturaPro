@@ -284,22 +284,49 @@
             padding: 15px 0;
         }
 
+        /* ACCESOS RAPIDOS MEJORADOS */
+
         .acciones-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
             gap: 18px;
         }
 
         .accion {
-            background: #151f30;
+            display: block;
+            background: linear-gradient(145deg, #172338, #121c2d);
             border: 1px solid #263449;
+            border-radius: 14px;
+            padding: 23px;
+            text-decoration: none;
+            transition: all .25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .accion:hover {
+            transform: translateY(-5px);
+            border-color: #3b82f6;
+            background: linear-gradient(145deg, #1b2c46, #142238);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .25);
+        }
+
+        .accion-icono {
+            width: 48px;
+            height: 48px;
+            background: #1e3a5f;
+            border: 1px solid #315580;
             border-radius: 12px;
-            padding: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 23px;
+            margin-bottom: 19px;
         }
 
         .accion h3 {
             color: white;
-            margin-bottom: 10px;
+            margin-bottom: 9px;
             font-size: 16px;
         }
 
@@ -307,7 +334,17 @@
             color: #94a3b8;
             font-size: 13px;
             line-height: 1.5;
-            margin-bottom: 17px;
+            margin-bottom: 20px;
+        }
+
+        .accion-enlace {
+            color: #60a5fa;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .accion:hover .accion-enlace {
+            color: #93c5fd;
         }
 
         .boton {
@@ -381,6 +418,10 @@
 
             .panel {
                 padding: 17px;
+            }
+
+            .accion {
+                padding: 20px;
             }
         }
     </style>
@@ -632,61 +673,59 @@
 
     </section>
 
-    <!-- ACCESOS RÁPIDOS -->
+    <!-- ACCESOS RÁPIDOS MEJORADOS -->
 
     <section class="seccion">
 
         <h2 class="titulo-seccion">Accesos rápidos</h2>
 
+        <p class="subtitulo">
+            Accede fácilmente a las principales herramientas de FacturaPro.
+        </p>
+
         <div class="acciones-grid">
 
-            <div class="accion">
-                <h3>🧾 Crear factura</h3>
-                <p>Registra una nueva venta para tus clientes.</p>
-                <a href="{{ url_for('nueva_factura') }}" class="boton">
-                    Nueva factura →
-                </a>
-            </div>
+            <a href="{{ url_for('nueva_factura') }}" class="accion">
+                <div class="accion-icono">🧾</div>
+                <h3>Crear factura</h3>
+                <p>Registra nuevas ventas y genera facturas para tus clientes.</p>
+                <span class="accion-enlace">Nueva factura →</span>
+            </a>
 
-            <div class="accion">
-                <h3>📄 Consultar facturas</h3>
-                <p>Revisa tus facturas y controla sus pagos.</p>
-                <a href="{{ url_for('facturas') }}" class="boton">
-                    Ver facturas →
-                </a>
-            </div>
+            <a href="{{ url_for('facturas') }}" class="accion">
+                <div class="accion-icono">📄</div>
+                <h3>Facturas</h3>
+                <p>Consulta las facturas, revisa sus detalles y controla los pagos.</p>
+                <span class="accion-enlace">Ver facturas →</span>
+            </a>
 
-            <div class="accion">
-                <h3>👥 Clientes</h3>
-                <p>Administra los datos de tus clientes.</p>
-                <a href="{{ url_for('clientes') }}" class="boton">
-                    Ver clientes →
-                </a>
-            </div>
+            <a href="{{ url_for('clientes') }}" class="accion">
+                <div class="accion-icono">👥</div>
+                <h3>Clientes</h3>
+                <p>Administra la información y los datos de tus clientes.</p>
+                <span class="accion-enlace">Ver clientes →</span>
+            </a>
 
-            <div class="accion">
-                <h3>📦 Inventario</h3>
-                <p>Controla productos, precios y existencias.</p>
-                <a href="{{ url_for('productos') }}" class="boton">
-                    Ver productos →
-                </a>
-            </div>
+            <a href="{{ url_for('productos') }}" class="accion">
+                <div class="accion-icono">📦</div>
+                <h3>Inventario</h3>
+                <p>Controla tus productos, precios y existencias disponibles.</p>
+                <span class="accion-enlace">Ver inventario →</span>
+            </a>
 
-            <div class="accion">
-                <h3>📊 Reportes</h3>
-                <p>Consulta los resultados financieros del negocio.</p>
-                <a href="{{ url_for('reportes') }}" class="boton">
-                    Ver reportes →
-                </a>
-            </div>
+            <a href="{{ url_for('reportes') }}" class="accion">
+                <div class="accion-icono">📊</div>
+                <h3>Reportes</h3>
+                <p>Analiza las ventas, los cobros y los resultados del negocio.</p>
+                <span class="accion-enlace">Ver reportes →</span>
+            </a>
 
-            <div class="accion">
-                <h3>⚙️ Configuración</h3>
-                <p>Accede a las opciones del sistema.</p>
-                <a href="{{ url_for('configuracion') }}" class="boton boton-rojo">
-                    Configuración →
-                </a>
-            </div>
+            <a href="{{ url_for('configuracion') }}" class="accion">
+                <div class="accion-icono">⚙️</div>
+                <h3>Configuración</h3>
+                <p>Administra las opciones y los ajustes generales del sistema.</p>
+                <span class="accion-enlace">Configurar sistema →</span>
+            </a>
 
         </div>
 
