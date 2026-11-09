@@ -232,12 +232,50 @@
             border: 1px solid #263449;
             border-radius: 13px;
             padding: 23px;
-            transition: .2s;
+            animation: movimientoTarjeta 3s ease-in-out infinite;
+            will-change: transform;
         }
 
         .tarjeta:hover {
-            transform: translateY(-3px);
             border-color: #3b82f6;
+        }
+
+        /* ANIMACION CONTINUA */
+
+        @keyframes movimientoTarjeta {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-9px);
+            }
+        }
+
+        /* MOVIMIENTO DIFERENTE PARA CADA TARJETA */
+
+        .tarjetas .tarjeta:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .tarjetas .tarjeta:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .tarjetas .tarjeta:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .tarjetas .tarjeta:nth-child(4) {
+            animation-delay: 0.9s;
+        }
+
+        .tarjetas .tarjeta:nth-child(5) {
+            animation-delay: 1.2s;
+        }
+
+        .tarjetas .tarjeta:nth-child(6) {
+            animation-delay: 1.5s;
         }
 
         .tarjeta h3 {
@@ -716,7 +754,7 @@
 
             </section>
 
-            <!-- ALERTAS DE INVENTARIO: SE CONSERVA -->
+            <!-- ALERTAS DE INVENTARIO -->
 
             <section class="seccion">
 
