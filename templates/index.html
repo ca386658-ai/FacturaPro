@@ -1,11 +1,10 @@
-```html
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>FacturaPro | Panel</title>
+    <title>FacturaPro | Dashboard</title>
 
     <style>
         * {
@@ -16,57 +15,88 @@
         }
 
         body {
-            background: #f4f6f9;
-            color: #222;
+            background: #0b1120;
+            color: #e5e7eb;
+            min-height: 100vh;
         }
 
         header {
             background: #111827;
-            color: white;
-            padding: 20px 30px;
+            padding: 24px 35px;
+            border-bottom: 1px solid #263449;
         }
 
         header h1 {
-            margin-bottom: 5px;
+            font-size: 27px;
+            color: white;
+            margin-bottom: 6px;
         }
 
         header p {
-            color: #cbd5e1;
+            color: #94a3b8;
+            font-size: 14px;
         }
 
         nav {
-            background: white;
-            padding: 15px 30px;
-            border-bottom: 1px solid #ddd;
+            background: #111827;
+            padding: 16px 35px;
+            border-bottom: 1px solid #263449;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 24px;
         }
 
         nav a {
+            color: #cbd5e1;
             text-decoration: none;
-            color: #111827;
-            margin-right: 25px;
+            font-size: 14px;
             font-weight: bold;
+            transition: 0.2s;
         }
 
         nav a:hover {
-            color: #2563eb;
+            color: #60a5fa;
         }
 
         .contenedor {
-            max-width: 1100px;
-            margin: 40px auto;
-            padding: 0 20px;
+            max-width: 1250px;
+            margin: 35px auto;
+            padding: 0 25px;
         }
 
         .bienvenida {
-            background: white;
+            background: linear-gradient(120deg, #172554, #111827);
+            border: 1px solid #263b69;
+            border-radius: 14px;
             padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 28px;
         }
 
         .bienvenida h2 {
+            color: white;
+            font-size: 25px;
             margin-bottom: 10px;
+        }
+
+        .bienvenida p {
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .etiqueta {
+            display: inline-block;
+            color: #93c5fd;
+            background: #1e3a8a;
+            padding: 6px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        .titulo-seccion {
+            font-size: 18px;
+            margin-bottom: 18px;
+            color: white;
         }
 
         .tarjetas {
@@ -76,21 +106,65 @@
         }
 
         .tarjeta {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            background: #151f30;
+            border: 1px solid #263449;
+            border-radius: 13px;
+            padding: 24px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .tarjeta:hover {
+            transform: translateY(-4px);
+            border-color: #3b82f6;
         }
 
         .tarjeta h3 {
-            margin-bottom: 10px;
+            color: #cbd5e1;
+            font-size: 15px;
+            margin-bottom: 17px;
         }
 
         .numero {
-            font-size: 35px;
+            color: #60a5fa;
+            font-size: 36px;
             font-weight: bold;
-            color: #2563eb;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+        }
+
+        .tarjeta p {
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .acciones {
+            margin-top: 35px;
+        }
+
+        .acciones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+        }
+
+        .accion {
+            background: #151f30;
+            border: 1px solid #263449;
+            border-radius: 12px;
+            padding: 22px;
+        }
+
+        .accion h3 {
+            color: white;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .accion p {
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 17px;
         }
 
         .boton {
@@ -98,33 +172,42 @@
             background: #2563eb;
             color: white;
             padding: 10px 15px;
-            border-radius: 8px;
+            border-radius: 7px;
             text-decoration: none;
-            margin-top: 10px;
+            font-size: 13px;
+            font-weight: bold;
+            transition: 0.2s;
         }
 
         .boton:hover {
             background: #1d4ed8;
         }
 
+        .boton-rojo {
+            background: #dc2626;
+        }
+
+        .boton-rojo:hover {
+            background: #b91c1c;
+        }
+
         footer {
             text-align: center;
-            padding: 30px;
-            color: #777;
+            padding: 30px 15px;
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 40px;
+            border-top: 1px solid #263449;
         }
 
         @media (max-width: 600px) {
             header {
-                padding: 20px;
+                padding: 22px 18px;
             }
 
             nav {
-                padding: 15px 20px;
-                line-height: 2.2;
-            }
-
-            nav a {
-                margin-right: 12px;
+                padding: 15px 18px;
+                gap: 15px;
             }
 
             .contenedor {
@@ -133,11 +216,19 @@
             }
 
             .bienvenida {
-                padding: 22px;
+                padding: 23px;
+            }
+
+            .bienvenida h2 {
+                font-size: 21px;
             }
 
             .tarjeta {
-                padding: 22px;
+                padding: 21px;
+            }
+
+            .numero {
+                font-size: 31px;
             }
         }
     </style>
@@ -160,99 +251,102 @@
     <a href="{{ url_for('configuracion') }}">⚙️ Configuración</a>
 </nav>
 
-<div class="contenedor">
+<main class="contenedor">
 
-    <div class="bienvenida">
-        <h2>Panel de control</h2>
-        <p>Bienvenido a FacturaPro. Desde aquí puedes administrar tu negocio.</p>
-    </div>
+    <section class="bienvenida">
+        <span class="etiqueta">PANEL DE ADMINISTRACIÓN</span>
+        <h2>Bienvenido a FacturaPro</h2>
+        <p>
+            Administra tu negocio desde un solo lugar.
+            Consulta tus registros y accede rápidamente
+            a las principales herramientas del sistema.
+        </p>
+    </section>
 
-    <div class="tarjetas">
+    <h2 class="titulo-seccion">Resumen del negocio</h2>
 
-        <!-- TOTAL DE FACTURAS -->
+    <section class="tarjetas">
+
         <div class="tarjeta">
-            <h3>📄 Facturas</h3>
+            <h3>📄 Total de facturas</h3>
+            <div class="numero">{{ total_facturas }}</div>
+            <p>Facturas registradas en el sistema.</p>
+        </div>
 
-            <div class="numero">
-                {{ total_facturas }}
+        <div class="tarjeta">
+            <h3>👥 Total de clientes</h3>
+            <div class="numero">{{ total_clientes }}</div>
+            <p>Clientes registrados en tu negocio.</p>
+        </div>
+
+        <div class="tarjeta">
+            <h3>📦 Total de productos</h3>
+            <div class="numero">{{ total_productos }}</div>
+            <p>Productos disponibles en el inventario.</p>
+        </div>
+
+    </section>
+
+    <section class="acciones">
+        <h2 class="titulo-seccion">Accesos rápidos</h2>
+
+        <div class="acciones-grid">
+
+            <div class="accion">
+                <h3>🧾 Crear factura</h3>
+                <p>Registra una nueva venta y genera una factura para tu cliente.</p>
+                <a href="{{ url_for('nueva_factura') }}" class="boton">
+                    Nueva factura →
+                </a>
             </div>
 
-            <p>Consulta las facturas registradas.</p>
-
-            <a href="{{ url_for('facturas') }}" class="boton">
-                Ver facturas →
-            </a>
-        </div>
-
-        <!-- TOTAL DE CLIENTES -->
-        <div class="tarjeta">
-            <h3>👥 Clientes</h3>
-
-            <div class="numero">
-                {{ total_clientes }}
+            <div class="accion">
+                <h3>📄 Consultar facturas</h3>
+                <p>Revisa las facturas registradas y consulta sus detalles.</p>
+                <a href="{{ url_for('facturas') }}" class="boton">
+                    Ver facturas →
+                </a>
             </div>
 
-            <p>Administra tus clientes.</p>
-
-            <a href="{{ url_for('clientes') }}" class="boton">
-                Ver clientes →
-            </a>
-        </div>
-
-        <!-- TOTAL DE PRODUCTOS -->
-        <div class="tarjeta">
-            <h3>📦 Productos</h3>
-
-            <div class="numero">
-                {{ total_productos }}
+            <div class="accion">
+                <h3>👥 Administrar clientes</h3>
+                <p>Consulta y administra la información de tus clientes.</p>
+                <a href="{{ url_for('clientes') }}" class="boton">
+                    Ver clientes →
+                </a>
             </div>
 
-            <p>Administra tus productos y stock.</p>
+            <div class="accion">
+                <h3>📦 Control de inventario</h3>
+                <p>Administra tus productos, precios y existencias.</p>
+                <a href="{{ url_for('productos') }}" class="boton">
+                    Ver productos →
+                </a>
+            </div>
 
-            <a href="{{ url_for('productos') }}" class="boton">
-                Ver productos →
-            </a>
+            <div class="accion">
+                <h3>📊 Reportes del negocio</h3>
+                <p>Consulta los resultados y la información general de tu negocio.</p>
+                <a href="{{ url_for('reportes') }}" class="boton">
+                    Ver reportes →
+                </a>
+            </div>
+
+            <div class="accion">
+                <h3>⚙️ Configuración</h3>
+                <p>Accede a las opciones de configuración del sistema.</p>
+                <a href="{{ url_for('configuracion') }}" class="boton boton-rojo">
+                    Configuración →
+                </a>
+            </div>
+
         </div>
+    </section>
 
-        <!-- CREAR FACTURA -->
-        <div class="tarjeta">
-            <h3>🧾 Nueva factura</h3>
-
-            <p>Crea una nueva factura para un cliente.</p>
-
-            <a href="{{ url_for('nueva_factura') }}" class="boton">
-                Crear factura →
-            </a>
-        </div>
-
-        <!-- REPORTES -->
-        <div class="tarjeta">
-            <h3>📊 Reportes</h3>
-
-            <p>Consulta información general del sistema.</p>
-
-            <a href="{{ url_for('reportes') }}" class="boton">
-                Ver reportes →
-            </a>
-        </div>
-
-        <!-- CONFIGURACIÓN -->
-        <div class="tarjeta">
-            <h3>⚙️ Configuración</h3>
-
-            <p>Administra las opciones del sistema.</p>
-
-            <a href="{{ url_for('configuracion') }}" class="boton">
-                Configuración →
-            </a>
-        </div>
-
-    </div>
-
-</div>
+</main>
 
 <footer>
-    FacturaPro © 2026 | Sistema de facturación
+    FacturaPro © 2026 | Sistema de gestión y facturación
 </footer>
 
 </body>
