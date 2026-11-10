@@ -32,7 +32,7 @@
         }
 
         header {
-            background: var(--morado-oscuro);
+            background: linear-gradient(120deg, #32145B, #54218A);
             color: white;
             padding: 18px 30px;
             display: flex;
@@ -40,6 +40,7 @@
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
+            box-shadow: 0 3px 12px rgba(50, 20, 91, 0.18);
         }
 
         header h1 {
@@ -49,14 +50,14 @@
         header a {
             color: white;
             text-decoration: none;
-            background: #513078;
+            background: rgba(255,255,255,0.14);
             padding: 10px 15px;
             border-radius: 8px;
             transition: 0.2s;
         }
 
         header a:hover {
-            background: #7044A3;
+            background: rgba(255,255,255,0.25);
         }
 
         .container {
@@ -373,6 +374,12 @@
             border: 1px solid var(--morado-borde);
             border-radius: 10px;
             border-left: 4px solid var(--morado-principal);
+            transition: 0.2s;
+        }
+
+        .resumen-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 14px rgba(124, 58, 237, 0.10);
         }
 
         .resumen-card span {
@@ -487,8 +494,6 @@
 
             </div>
 
-            <!-- BUSCADOR INTELIGENTE -->
-
             <div class="buscador">
 
                 <h3>🔎 Buscar y filtrar facturas</h3>
@@ -526,10 +531,7 @@
                             Buscar por fecha
                         </label>
 
-                        <input
-                            type="date"
-                            id="filtroFecha"
-                        >
+                        <input type="date" id="filtroFecha">
                     </div>
 
                     <button
@@ -724,110 +726,123 @@
 </div>
 
 <script>
-    const buscarFactura = document.getElementById("buscarFactura");
-    const filtroEstado = document.getElementById("filtroEstado");
-    const filtroFecha = document.getElementById("filtroFecha");
-    const limpiarFiltros = document.getElementById("limpiarFiltros");
-    const resultadoBusqueda = document.getElementById("resultadoBusqueda");
-    const sinResultados = document.getElementById("sinResultados");
+    document.addEventListener("DOMContentLoaded", function() {
 
-    const filas = document.querySelectorAll(".fila-factura");
+        const buscarFactura = document.getElementById("buscarFactura");
+        const filtroEstado = document.getElementById("filtroEstado");
+        const filtroFecha = document.getElementById("filtroFecha");
+        const limpiarFiltros = document.getElementById("limpiarFiltros");
+        const resultadoBusqueda = document.getElementById("resultadoBusqueda");
+        const sinResultados = document.getElementById("sinResultados");
 
-    function normalizarTexto(texto) {
-        return texto
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .trim();
-    }
+        const filas = document.querySelectorAll(".fila-factura");
 
-    function aplicarFiltros() {
+        // Si no hay facturas, no intenta ejecutar los filtros.
+        if (
+            !buscarFactura ||
+            !filtroEstado ||
+            !filtroFecha ||
+            !limpiarFiltros ||
+            !resultadoBusqueda ||
+            !sinResultados
+        ) {
+            return;
+        }
 
-        const texto = normalizarTexto(buscarFactura.value);
-        const estado = filtroEstado.value;
-        const fecha = filtroFecha.value;
+        function normalizarTexto(texto) {
+            return String(texto || "")
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .trim();
+        }
 
-        let cantidadVisible = 0;
+        function aplicarFiltros() {
 
-        filas.forEach(function(fila) {
+            const texto = normalizarTexto(buscarFactura.value);
+            const estado = filtroEstado.value;
+            const fecha = filtroFecha.value;
 
-            const numero = normalizarTexto(fila.dataset.numero);
-            const cliente = normalizarTexto(fila.dataset.cliente);
-            const estadoFactura = fila.dataset.estado;
-            const estadoPago = fila.dataset.pago;
-            const fechaFactura = fila.dataset.fecha;
+            let cantidadVisible = 0;
 
-            const coincideTexto =
-                numero.includes(texto) ||
-                cliente.includes(texto);
+            filas.forEach(function(fila) {
 
-            const coincideFecha =
-                fecha === "" || fechaFactura === fecha;
+                const numero = normalizarTexto(fila.dataset.numero);
+                const cliente = normalizarTexto(fila.dataset.cliente);
+                const estadoFactura = fila.dataset.estado;
+                const estadoPago = fila.dataset.pago;
+                const fechaFactura = fila.dataset.fecha;
 
-            let coincideEstado = true;
+                const coincideTexto =
+                    numero.includes(texto) ||
+                    cliente.includes(texto);
 
-            if (estado === "pagada") {
-                coincideEstado =
-                    estadoFactura !== "anulada" &&
-                    estadoPago === "pagada";
-            }
+                const coincideFecha =
+                    fecha === "" || fechaFactura === fecha;
 
-            else if (estado === "pendiente") {
-                coincideEstado =
-                    estadoFactura !== "anulada" &&
-                    estadoPago !== "pagada" &&
-                    estadoPago !== "parcial";
-            }
+                let coincideEstado = true;
 
-            else if (estado === "parcial") {
-                coincideEstado =
-                    estadoFactura !== "anulada" &&
-                    estadoPago === "parcial";
-            }
+                if (estado === "pagada") {
+                    coincideEstado =
+                        estadoFactura !== "anulada" &&
+                        estadoPago === "pagada";
+                }
 
-            else if (estado === "anulada") {
-                coincideEstado = estadoFactura === "anulada";
-            }
+                else if (estado === "pendiente") {
+                    coincideEstado =
+                        estadoFactura !== "anulada" &&
+                        estadoPago !== "pagada" &&
+                        estadoPago !== "parcial";
+                }
 
-            const mostrar =
-                coincideTexto &&
-                coincideFecha &&
-                coincideEstado;
+                else if (estado === "parcial") {
+                    coincideEstado =
+                        estadoFactura !== "anulada" &&
+                        estadoPago === "parcial";
+                }
 
-            fila.style.display = mostrar ? "" : "none";
+                else if (estado === "anulada") {
+                    coincideEstado = estadoFactura === "anulada";
+                }
 
-            if (mostrar) {
-                cantidadVisible++;
-            }
+                const mostrar =
+                    coincideTexto &&
+                    coincideFecha &&
+                    coincideEstado;
+
+                fila.style.display = mostrar ? "" : "none";
+
+                if (mostrar) {
+                    cantidadVisible++;
+                }
+
+            });
+
+            resultadoBusqueda.textContent =
+                "Mostrando " + cantidadVisible +
+                " de " + filas.length + " facturas.";
+
+            sinResultados.style.display =
+                cantidadVisible === 0 ? "block" : "none";
+        }
+
+        buscarFactura.addEventListener("input", aplicarFiltros);
+        filtroEstado.addEventListener("change", aplicarFiltros);
+        filtroFecha.addEventListener("change", aplicarFiltros);
+
+        limpiarFiltros.addEventListener("click", function() {
+
+            buscarFactura.value = "";
+            filtroEstado.value = "todas";
+            filtroFecha.value = "";
+
+            aplicarFiltros();
 
         });
-
-        resultadoBusqueda.textContent =
-            "Mostrando " + cantidadVisible +
-            " de " + filas.length + " facturas.";
-
-        if (cantidadVisible === 0) {
-            sinResultados.style.display = "block";
-        } else {
-            sinResultados.style.display = "none";
-        }
-    }
-
-    buscarFactura.addEventListener("input", aplicarFiltros);
-    filtroEstado.addEventListener("change", aplicarFiltros);
-    filtroFecha.addEventListener("change", aplicarFiltros);
-
-    limpiarFiltros.addEventListener("click", function() {
-
-        buscarFactura.value = "";
-        filtroEstado.value = "todas";
-        filtroFecha.value = "";
 
         aplicarFiltros();
 
     });
-
-    aplicarFiltros();
 </script>
 
 </body>
