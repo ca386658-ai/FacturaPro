@@ -14,13 +14,25 @@
             font-family: Arial, sans-serif;
         }
 
+        :root {
+            --morado-oscuro: #32145B;
+            --morado: #6D28D9;
+            --morado-principal: #7C3AED;
+            --morado-claro: #A78BFA;
+            --morado-suave: #F5F0FF;
+            --morado-borde: #DDD0F5;
+            --texto: #302344;
+            --gris: #756B83;
+            --fondo: #F7F5FA;
+        }
+
         body {
-            background: #f4f6f8;
-            color: #222;
+            background: var(--fondo);
+            color: var(--texto);
         }
 
         header {
-            background: #111827;
+            background: var(--morado-oscuro);
             color: white;
             padding: 18px 30px;
             display: flex;
@@ -37,9 +49,14 @@
         header a {
             color: white;
             text-decoration: none;
-            background: #374151;
+            background: #513078;
             padding: 10px 15px;
             border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        header a:hover {
+            background: #7044A3;
         }
 
         .container {
@@ -50,9 +67,10 @@
 
         .card {
             background: white;
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 25px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 16px rgba(50, 20, 91, 0.08);
+            border: 1px solid #EEE7F8;
         }
 
         .top {
@@ -64,20 +82,30 @@
             flex-wrap: wrap;
         }
 
+        .top h2 {
+            color: var(--morado-oscuro);
+        }
+
         .btn-nueva {
-            background: #16a34a;
+            background: var(--morado-principal);
             color: white;
             text-decoration: none;
             padding: 12px 18px;
             border-radius: 8px;
             font-weight: bold;
+            transition: 0.2s;
         }
 
-        /* BUSCADOR INTELIGENTE */
+        .btn-nueva:hover {
+            background: var(--morado);
+            transform: translateY(-1px);
+        }
+
+        /* BUSCADOR */
 
         .buscador {
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
+            background: var(--morado-suave);
+            border: 1px solid var(--morado-borde);
             padding: 18px;
             border-radius: 10px;
             margin-bottom: 22px;
@@ -86,7 +114,7 @@
         .buscador h3 {
             margin-bottom: 15px;
             font-size: 17px;
-            color: #111827;
+            color: var(--morado-oscuro);
         }
 
         .filtros {
@@ -100,7 +128,7 @@
             display: block;
             font-size: 13px;
             font-weight: bold;
-            color: #374151;
+            color: var(--texto);
             margin-bottom: 7px;
         }
 
@@ -108,35 +136,39 @@
         .campo select {
             width: 100%;
             padding: 11px;
-            border: 1px solid #d1d5db;
+            border: 1px solid var(--morado-borde);
             border-radius: 7px;
             font-size: 14px;
             outline: none;
             background: white;
+            color: var(--texto);
+            transition: 0.2s;
         }
 
         .campo input:focus,
         .campo select:focus {
-            border-color: #2563eb;
+            border-color: var(--morado-principal);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
         }
 
         .btn-limpiar {
-            background: #374151;
+            background: var(--morado-oscuro);
             color: white;
             border: none;
             padding: 11px 15px;
             border-radius: 7px;
             cursor: pointer;
             font-weight: bold;
+            transition: 0.2s;
         }
 
         .btn-limpiar:hover {
-            background: #1f2937;
+            background: var(--morado);
         }
 
         .resultado-busqueda {
             margin-top: 13px;
-            color: #6b7280;
+            color: var(--gris);
             font-size: 13px;
         }
 
@@ -144,14 +176,21 @@
             display: none;
             text-align: center;
             padding: 35px 15px;
-            color: #6b7280;
-            background: #f9fafb;
+            color: var(--gris);
+            background: var(--morado-suave);
             border-radius: 8px;
             margin-top: 15px;
         }
 
+        .sin-resultados h3 {
+            color: var(--morado-oscuro);
+        }
+
+        /* TABLA */
+
         .table-container {
             overflow-x: auto;
+            border-radius: 9px;
         }
 
         table {
@@ -162,27 +201,34 @@
 
         th, td {
             padding: 13px 10px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid #EEE7F8;
             text-align: left;
         }
 
         th {
-            background: #f3f4f6;
+            background: var(--morado-suave);
+            color: var(--morado-oscuro);
             white-space: nowrap;
             font-size: 13px;
         }
 
         td {
             font-size: 13px;
+            color: var(--texto);
+        }
+
+        tbody tr:hover {
+            background: #FAF8FF;
         }
 
         .numero {
             font-weight: bold;
-            color: #2563eb;
+            color: var(--morado);
         }
 
         .total {
             font-weight: bold;
+            color: var(--morado-oscuro);
         }
 
         .acciones {
@@ -206,34 +252,35 @@
             font-weight: bold;
             cursor: pointer;
             white-space: nowrap;
+            transition: 0.2s;
         }
 
         .btn-ver {
-            background: #2563eb;
+            background: var(--morado-principal);
         }
 
         .btn-ver:hover {
-            background: #1d4ed8;
+            background: var(--morado-oscuro);
         }
 
         .btn-pagar {
-            background: #16a34a;
+            background: #16A34A;
         }
 
         .btn-pagar:hover {
-            background: #15803d;
+            background: #15803D;
         }
 
         .btn-anular {
-            background: #dc2626;
+            background: #DC2626;
         }
 
         .btn-anular:hover {
-            background: #b91c1c;
+            background: #B91C1C;
         }
 
         .btn-reactivar {
-            background: #15803d;
+            background: #15803D;
         }
 
         .btn-reactivar:hover {
@@ -246,6 +293,8 @@
             margin: 0;
         }
 
+        /* ESTADOS */
+
         .estado {
             display: inline-block;
             padding: 6px 9px;
@@ -257,28 +306,30 @@
 
         .estado-activa {
             color: #166534;
-            background: #dcfce7;
+            background: #DCFCE7;
         }
 
         .estado-anulada {
-            color: #991b1b;
-            background: #fee2e2;
+            color: #991B1B;
+            background: #FEE2E2;
         }
 
         .pago-pagada {
             color: #166534;
-            background: #dcfce7;
+            background: #DCFCE7;
         }
 
         .pago-pendiente {
-            color: #991b1b;
-            background: #fee2e2;
+            color: #991B1B;
+            background: #FEE2E2;
         }
 
         .pago-parcial {
-            color: #92400e;
-            background: #fef3c7;
+            color: #92400E;
+            background: #FEF3C7;
         }
+
+        /* MENSAJES */
 
         .mensaje {
             padding: 12px 15px;
@@ -288,20 +339,26 @@
         }
 
         .mensaje.success {
-            background: #dcfce7;
+            background: #DCFCE7;
             color: #166534;
         }
 
         .mensaje.error {
-            background: #fee2e2;
-            color: #991b1b;
+            background: #FEE2E2;
+            color: #991B1B;
         }
 
         .vacio {
             text-align: center;
             padding: 40px;
-            color: #6b7280;
+            color: var(--gris);
         }
+
+        .vacio h3 {
+            color: var(--morado-oscuro);
+        }
+
+        /* RESUMEN */
 
         .resumen {
             display: grid;
@@ -311,21 +368,23 @@
         }
 
         .resumen-card {
-            padding: 17px;
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 9px;
+            padding: 18px;
+            background: var(--morado-suave);
+            border: 1px solid var(--morado-borde);
+            border-radius: 10px;
+            border-left: 4px solid var(--morado-principal);
         }
 
         .resumen-card span {
             display: block;
-            color: #6b7280;
+            color: var(--gris);
             font-size: 13px;
             margin-bottom: 7px;
         }
 
         .resumen-card strong {
             font-size: 20px;
+            color: var(--morado-oscuro);
         }
 
         @media (max-width: 850px) {
