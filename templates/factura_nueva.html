@@ -9,6 +9,8 @@
     <style>
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         :root {
@@ -27,81 +29,158 @@
         }
 
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
             background: var(--fondo);
             color: var(--texto);
+            min-height: 100vh;
         }
 
+        /* ENCABEZADO */
+
         .header {
-            background: var(--morado-oscuro);
+            background: linear-gradient(110deg, #32145B, #6D28D9);
             color: white;
-            padding: 18px 30px;
+            padding: 22px 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 15px;
+            gap: 18px;
             flex-wrap: wrap;
-            box-shadow: 0 3px 12px rgba(50,20,91,0.18);
+            box-shadow: 0 4px 15px rgba(50,20,91,0.16);
         }
 
         .header h1 {
-            margin: 0;
-            font-size: 22px;
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            color: #E9DFFF;
+            font-size: 13px;
         }
 
         .volver {
             color: white;
             text-decoration: none;
-            background: #51317B;
-            padding: 10px 15px;
-            border-radius: 8px;
+            background: rgba(255,255,255,0.14);
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 11px 17px;
+            border-radius: 9px;
+            font-weight: bold;
             transition: 0.2s;
         }
 
         .volver:hover {
-            background: var(--morado-principal);
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-
-        .card {
-            background: var(--blanco);
-            padding: 25px;
-            border-radius: 14px;
-            margin-bottom: 20px;
-            border: 1px solid #EAE3F4;
-            box-shadow: 0 4px 15px rgba(67,35,104,0.06);
-        }
-
-        .card h2 {
-            margin-top: 0;
-            margin-bottom: 22px;
-            font-size: 20px;
+            background: white;
             color: var(--morado-oscuro);
         }
+
+        /* CONTENEDOR */
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 22px;
+        }
+
+        /* INFORMACIÓN DE FACTURA */
+
+        .factura-info {
+            background: white;
+            border: 1px solid #EEE7F8;
+            border-radius: 13px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 4px 14px rgba(50,20,91,0.04);
+        }
+
+        .factura-info strong {
+            color: var(--morado-oscuro);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .factura-info span {
+            color: var(--gris);
+            font-size: 13px;
+        }
+
+        .numero-automatico {
+            background: var(--morado-suave);
+            color: var(--morado) !important;
+            padding: 9px 13px;
+            border-radius: 8px;
+            font-weight: bold;
+            border: 1px solid var(--morado-borde);
+        }
+
+        /* TARJETAS */
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            margin-bottom: 22px;
+            border: 1px solid #EAE3F4;
+            box-shadow: 0 4px 16px rgba(50,20,91,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 23px;
+        }
+
+        .card-icon {
+            width: 43px;
+            height: 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--morado-suave);
+            color: var(--morado);
+            border-radius: 11px;
+            font-size: 21px;
+            flex-shrink: 0;
+        }
+
+        .card-header h2 {
+            color: var(--morado-oscuro);
+            font-size: 19px;
+            margin-bottom: 5px;
+        }
+
+        .card-header p {
+            font-size: 13px;
+            color: var(--gris);
+        }
+
+        /* CAMPOS */
 
         label {
             display: block;
             font-weight: bold;
             margin-bottom: 8px;
             color: var(--texto);
+            font-size: 13px;
         }
 
         .campo {
-            margin-bottom: 18px;
+            margin-bottom: 17px;
         }
 
         input {
             width: 100%;
-            padding: 12px;
+            padding: 13px 14px;
             border: 1px solid var(--morado-borde);
-            border-radius: 8px;
-            font-size: 15px;
+            border-radius: 9px;
+            font-size: 14px;
             background: white;
             color: var(--texto);
             outline: none;
@@ -117,6 +196,8 @@
             color: #A49AAE;
         }
 
+        /* BUSCADORES */
+
         .busqueda {
             position: relative;
         }
@@ -127,16 +208,16 @@
             background: white;
             border: 1px solid var(--morado-borde);
             border-radius: 9px;
-            margin-top: 4px;
-            max-height: 220px;
+            margin-top: 5px;
+            max-height: 230px;
             overflow-y: auto;
             z-index: 1000;
             display: none;
-            box-shadow: 0 6px 18px rgba(50,20,91,0.12);
+            box-shadow: 0 8px 20px rgba(50,20,91,0.13);
         }
 
         .resultado {
-            padding: 12px 14px;
+            padding: 13px 15px;
             cursor: pointer;
             border-bottom: 1px solid #F0EAF7;
             transition: 0.2s;
@@ -153,6 +234,7 @@
         .resultado strong {
             display: block;
             color: var(--morado-oscuro);
+            margin-bottom: 5px;
         }
 
         .resultado small {
@@ -160,31 +242,42 @@
         }
 
         .seleccionado {
-            margin-top: 10px;
-            padding: 14px;
+            margin-top: 13px;
+            padding: 15px;
             background: var(--morado-suave);
             border: 1px solid var(--morado-borde);
-            border-radius: 9px;
+            border-radius: 10px;
             display: none;
             color: var(--morado-oscuro);
+            line-height: 1.7;
+        }
+
+        .seleccionado strong {
+            color: var(--morado);
         }
 
         .stock {
-            margin-top: 8px;
+            margin-top: 5px;
             color: var(--verde);
             font-weight: bold;
+            font-size: 13px;
         }
 
-        .cantidad {
-            width: 120px;
+        /* PRODUCTOS */
+
+        .producto-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 150px;
+            gap: 18px;
+            align-items: end;
         }
 
         .btn {
             border: none;
-            padding: 11px 18px;
-            border-radius: 8px;
+            padding: 12px 18px;
+            border-radius: 9px;
             cursor: pointer;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             transition: 0.2s;
         }
@@ -192,31 +285,20 @@
         .btn-agregar {
             background: var(--morado-principal);
             color: white;
-            margin-top: 12px;
+            margin-top: 16px;
         }
 
         .btn-agregar:hover {
             background: var(--morado-oscuro);
-        }
-
-        .btn-imprimir {
-            background: var(--morado);
-            color: white;
-            width: 100%;
-            padding: 15px;
-            font-size: 17px;
-        }
-
-        .btn-imprimir:hover {
-            background: var(--morado-oscuro);
+            transform: translateY(-1px);
         }
 
         .btn-eliminar {
-            background: #FEE2E2;
+            background: #FEF2F2;
             color: var(--rojo);
             border: 1px solid #FECACA;
-            padding: 7px 11px;
-            border-radius: 6px;
+            padding: 8px 11px;
+            border-radius: 7px;
             cursor: pointer;
             font-weight: bold;
         }
@@ -226,28 +308,34 @@
             color: white;
         }
 
+        /* TABLA */
+
         .tabla-contenedor {
             overflow-x: auto;
-            border-radius: 9px;
+            border-radius: 10px;
             border: 1px solid #EAE3F4;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 650px;
+            min-width: 680px;
         }
 
         th {
             background: var(--morado-oscuro);
             color: white;
-            padding: 14px 12px;
+            padding: 15px 13px;
             text-align: left;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         td {
-            padding: 13px 12px;
+            padding: 14px 13px;
             border-bottom: 1px solid #EAE3F4;
+            font-size: 13px;
         }
 
         tbody tr:hover {
@@ -258,37 +346,96 @@
             border-bottom: none;
         }
 
+        .sin-resultados {
+            padding: 25px;
+            color: var(--gris);
+            text-align: center;
+        }
+
+        /* TOTALES */
+
         .totales {
             margin-top: 22px;
-            max-width: 400px;
             margin-left: auto;
-            background: var(--morado-suave);
-            padding: 16px;
-            border-radius: 10px;
+            max-width: 390px;
+            background: #FAF8FF;
+            padding: 19px;
+            border-radius: 11px;
             border: 1px solid var(--morado-borde);
         }
 
         .total-linea {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            font-size: 16px;
+            align-items: center;
+            padding: 9px 0;
+            font-size: 14px;
             gap: 15px;
+        }
+
+        .total-linea strong {
+            color: var(--texto);
         }
 
         .total-final {
             border-top: 2px solid var(--morado-claro);
-            margin-top: 8px;
-            padding-top: 14px;
+            margin-top: 9px;
+            padding-top: 15px;
             font-size: 21px;
             font-weight: bold;
             color: var(--morado-oscuro);
         }
 
+        .total-final strong {
+            color: var(--morado);
+            font-size: 23px;
+        }
+
+        /* GUARDAR */
+
+        .guardar-card {
+            background: linear-gradient(110deg, #32145B, #6D28D9);
+            color: white;
+            padding: 25px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            box-shadow: 0 5px 18px rgba(50,20,91,0.16);
+        }
+
+        .guardar-card h3 {
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .guardar-card p {
+            color: #E9DFFF;
+            font-size: 13px;
+        }
+
+        .btn-imprimir {
+            background: white;
+            color: var(--morado-oscuro);
+            padding: 15px 22px;
+            font-size: 15px;
+            white-space: nowrap;
+        }
+
+        .btn-imprimir:hover {
+            background: #EEE7FF;
+            transform: translateY(-1px);
+        }
+
+        /* MENSAJES */
+
         .mensaje {
-            padding: 13px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            padding: 14px 16px;
+            border-radius: 9px;
+            margin-bottom: 18px;
+            font-size: 14px;
         }
 
         .mensaje.error {
@@ -303,19 +450,17 @@
             border: 1px solid #BBF7D0;
         }
 
-        .sin-resultados {
-            padding: 14px;
-            color: var(--gris);
-            text-align: center;
-        }
+        /* RESPONSIVE */
 
-        @media (max-width: 600px) {
+        @media (max-width: 650px) {
             .header {
-                padding: 16px;
+                padding: 18px;
+                align-items: flex-start;
+                flex-direction: column;
             }
 
             .header h1 {
-                font-size: 19px;
+                font-size: 20px;
             }
 
             .container {
@@ -327,10 +472,30 @@
                 padding: 18px;
             }
 
+            .producto-grid {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .btn-agregar {
+                width: 100%;
+            }
+
             .totales {
                 max-width: 100%;
             }
+
+            .guardar-card {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .btn-imprimir {
+                width: 100%;
+            }
         }
+
+        /* IMPRESIÓN */
 
         @media print {
             body {
@@ -340,7 +505,8 @@
             .header,
             .volver,
             .btn,
-            .formulario-impresion {
+            .formulario-impresion,
+            .factura-info {
                 display: none !important;
             }
 
@@ -353,6 +519,11 @@
             .card {
                 box-shadow: none;
                 border: 1px solid #ddd;
+                break-inside: avoid;
+            }
+
+            .guardar-card {
+                display: none !important;
             }
         }
     </style>
@@ -361,14 +532,17 @@
 <body>
 
 <header class="header">
-    <h1>🧾 FacturaPro | Nueva Factura</h1>
+    <div>
+        <h1>🧾 FacturaPro | Nueva Factura</h1>
+        <p>Prepara y registra una nueva factura para tu negocio.</p>
+    </div>
 
     <a href="{{ url_for('inicio') }}" class="volver">
         ← Volver al panel
     </a>
 </header>
 
-<div class="container">
+<main class="container">
 
     {% with mensajes = get_flashed_messages(with_categories=true) %}
         {% if mensajes %}
@@ -380,13 +554,32 @@
         {% endif %}
     {% endwith %}
 
+    <!-- INFORMACIÓN DE FACTURA -->
+
+    <section class="factura-info">
+        <div>
+            <strong>🧾 Nueva operación</strong>
+            <span>El número de factura se asignará automáticamente al guardarla.</span>
+        </div>
+
+        <span class="numero-automatico">
+            FAC- AUTOMÁTICO
+        </span>
+    </section>
+
     <!-- CLIENTE -->
 
-    <div class="card">
-        <h2>👤 Cliente</h2>
+    <section class="card">
+        <div class="card-header">
+            <div class="card-icon">👤</div>
+            <div>
+                <h2>Seleccionar cliente</h2>
+                <p>Busca el cliente al que deseas emitir la factura.</p>
+            </div>
+        </div>
 
         <div class="campo">
-            <label>Buscar cliente por nombre</label>
+            <label for="buscarCliente">Buscar cliente por nombre</label>
 
             <div class="busqueda">
                 <input
@@ -406,15 +599,21 @@
             <strong>Cliente seleccionado:</strong>
             <div id="nombreClienteSeleccionado"></div>
         </div>
-    </div>
+    </section>
 
     <!-- PRODUCTO -->
 
-    <div class="card">
-        <h2>📦 Producto</h2>
+    <section class="card">
+        <div class="card-header">
+            <div class="card-icon">📦</div>
+            <div>
+                <h2>Agregar productos</h2>
+                <p>Selecciona los productos y las cantidades que necesitas.</p>
+            </div>
+        </div>
 
         <div class="campo">
-            <label>Buscar producto por nombre</label>
+            <label for="buscarProducto">Buscar producto por nombre</label>
 
             <div class="busqueda">
                 <input
@@ -435,31 +634,40 @@
             <div id="stockProducto" class="stock"></div>
         </div>
 
-        <div class="campo" style="margin-top:18px;">
-            <label>Cantidad</label>
+        <div class="producto-grid" style="margin-top:18px;">
+            <div class="campo">
+                <label for="cantidad">Cantidad</label>
+                <input
+                    type="number"
+                    id="cantidad"
+                    value="1"
+                    min="1"
+                    step="1"
+                >
+            </div>
 
-            <input
-                type="number"
-                id="cantidad"
-                class="cantidad"
-                value="1"
-                min="1"
-            >
+            <div class="campo">
+                <button
+                    type="button"
+                    class="btn btn-agregar"
+                    onclick="agregarProducto()"
+                >
+                    ＋ Agregar producto
+                </button>
+            </div>
         </div>
+    </section>
 
-        <button
-            type="button"
-            class="btn btn-agregar"
-            onclick="agregarProducto()"
-        >
-            + Agregar producto
-        </button>
-    </div>
+    <!-- DETALLE DE FACTURA -->
 
-    <!-- PRODUCTOS DE LA FACTURA -->
-
-    <div class="card">
-        <h2>🧾 Productos de la factura</h2>
+    <section class="card">
+        <div class="card-header">
+            <div class="card-icon">🧾</div>
+            <div>
+                <h2>Detalle de la factura</h2>
+                <p>Revisa los productos antes de guardar la operación.</p>
+            </div>
+        </div>
 
         <div class="tabla-contenedor">
             <table>
@@ -476,15 +684,13 @@
 
                 <tbody id="tablaProductos">
                     <tr>
-                        <td colspan="6" style="text-align:center;">
-                            No hay productos agregados
+                        <td colspan="6" class="sin-resultados">
+                            🛒 No hay productos agregados todavía.
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
-        <!-- TOTALES -->
 
         <div class="totales">
             <div class="total-linea">
@@ -502,35 +708,40 @@
                 <strong id="total">$0.00</strong>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- GUARDAR FACTURA -->
 
-    <div class="card">
-        <form
-            method="POST"
-            action="{{ url_for('guardar_factura') }}"
-            onsubmit="return prepararFactura()"
+    <form
+        method="POST"
+        action="{{ url_for('guardar_factura') }}"
+        onsubmit="return prepararFactura()"
+    >
+        <input
+            type="hidden"
+            name="cliente_id"
+            id="cliente_id_form"
         >
-            <input
-                type="hidden"
-                name="cliente_id"
-                id="cliente_id_form"
-            >
 
-            <input
-                type="hidden"
-                name="items"
-                id="items"
-            >
+        <input
+            type="hidden"
+            name="items"
+            id="items"
+        >
+
+        <div class="guardar-card">
+            <div>
+                <h3>¿Todo está correcto?</h3>
+                <p>Verifica el cliente y los productos antes de registrar la factura.</p>
+            </div>
 
             <button type="submit" class="btn btn-imprimir">
-                🖨️ Imprimir factura
+                🖨️ Guardar e imprimir factura
             </button>
-        </form>
-    </div>
+        </div>
+    </form>
 
-</div>
+</main>
 
 <script>
 
@@ -795,8 +1006,8 @@ function actualizarTabla() {
     if (facturaProductos.length === 0) {
         tabla.innerHTML = `
             <tr>
-                <td colspan="6" style="text-align:center;">
-                    No hay productos agregados
+                <td colspan="6" class="sin-resultados">
+                    🛒 No hay productos agregados todavía.
                 </td>
             </tr>
         `;
@@ -817,12 +1028,13 @@ function actualizarTabla() {
             <td>${item.cantidad}</td>
             <td>$${item.precio.toFixed(2)}</td>
             <td>$${itbis.toFixed(2)}</td>
-            <td>$${total.toFixed(2)}</td>
+            <td><strong>$${total.toFixed(2)}</strong></td>
             <td>
                 <button
                     type="button"
                     class="btn-eliminar"
                     onclick="eliminarProducto(${index})"
+                    title="Eliminar producto"
                 >
                     🗑️
                 </button>
