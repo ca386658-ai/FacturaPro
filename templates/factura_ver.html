@@ -146,6 +146,8 @@
             overflow-wrap: anywhere;
         }
 
+        /* CONTROL DE PAGOS */
+
         .estado-pago {
             margin: 20px 0;
             padding: 16px;
@@ -207,6 +209,14 @@
             overflow-wrap: anywhere;
         }
 
+        .metodo-pago {
+            margin-top: 12px;
+            padding: 10px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 7px;
+        }
+
         .acciones-pago {
             display: flex;
             flex-wrap: wrap;
@@ -222,7 +232,8 @@
             margin-top: 12px;
         }
 
-        .form-abono input {
+        .form-abono input,
+        .form-abono select {
             flex: 1;
             min-width: 150px;
             padding: 11px;
@@ -245,6 +256,11 @@
 
         .btn-imprimir {
             background: #2563eb;
+            color: white;
+        }
+
+        .btn-ticket {
+            background: #7c3aed;
             color: white;
         }
 
@@ -271,242 +287,14 @@
             margin: 20px auto;
         }
 
-        @page {
-            size: 80mm auto;
-            margin: 2mm;
+        .nota-impresion {
+            text-align: center;
+            color: #6b7280;
+            font-size: 12px;
+            margin: 10px auto 20px;
         }
 
-        @media print {
-            html,
-            body {
-                width: auto !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white !important;
-                color: black !important;
-                font-family: Arial, Helvetica, sans-serif;
-                font-size: 9pt;
-            }
-
-            body {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            .factura {
-                width: 100% !important;
-                max-width: none !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                border: 0 !important;
-                border-radius: 0 !important;
-                box-shadow: none !important;
-            }
-
-            .encabezado {
-                display: block;
-                padding-bottom: 7px;
-                margin-bottom: 9px;
-                border-bottom: 1px dashed black;
-            }
-
-            .empresa h1 {
-                margin-bottom: 3px;
-                font-size: 17pt;
-            }
-
-            .empresa p,
-            .numero-factura p {
-                margin: 2px 0;
-                color: black;
-                font-size: 8pt;
-            }
-
-            .numero-factura {
-                margin-top: 6px;
-                text-align: left;
-            }
-
-            .numero-factura h2 {
-                margin-bottom: 3px;
-                font-size: 11pt;
-            }
-
-            .cliente {
-                padding: 6px 0;
-                margin-bottom: 9px;
-                background: transparent !important;
-                border-bottom: 1px dashed black;
-                border-radius: 0;
-            }
-
-            .cliente h3,
-            .productos-titulo {
-                margin-bottom: 5px;
-                font-size: 9pt;
-            }
-
-            .cliente p {
-                margin: 3px 0;
-                font-size: 8pt;
-            }
-
-            table {
-                width: 100% !important;
-                margin-top: 5px;
-                table-layout: fixed;
-                border-collapse: collapse;
-                font-size: 7pt;
-            }
-
-            thead {
-                display: table-header-group;
-            }
-
-            tr {
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-
-            th {
-                padding: 4px 1px;
-                background: #eee !important;
-                color: black !important;
-                border-bottom: 1px solid black;
-                font-size: 7pt;
-                overflow-wrap: anywhere;
-            }
-
-            td {
-                padding: 4px 1px;
-                border-bottom: 1px dotted #aaa;
-                font-size: 7pt;
-                overflow-wrap: anywhere;
-                white-space: normal;
-            }
-
-            th:first-child,
-            td:first-child {
-                width: 30%;
-                text-align: left;
-            }
-
-            th:nth-child(2),
-            td:nth-child(2) {
-                width: 10%;
-                text-align: center;
-            }
-
-            th:nth-child(3),
-            td:nth-child(3) {
-                width: 21%;
-            }
-
-            th:nth-child(4),
-            td:nth-child(4) {
-                width: 17%;
-            }
-
-            th:nth-child(5),
-            td:nth-child(5) {
-                width: 22%;
-            }
-
-            .numerico {
-                text-align: right;
-                white-space: normal;
-                overflow-wrap: anywhere;
-            }
-
-            .totales {
-                width: 100%;
-                max-width: none;
-                margin-top: 9px;
-            }
-
-            .linea {
-                gap: 4px;
-                padding: 3px 0;
-                font-size: 8pt;
-            }
-
-            .linea span,
-            .linea strong {
-                overflow-wrap: anywhere;
-            }
-
-            .total {
-                margin-top: 4px;
-                padding-top: 6px;
-                border-top: 1px solid black;
-                font-size: 12pt;
-            }
-
-            .gracias {
-                margin-top: 12px;
-                padding-top: 7px;
-                border-top: 1px dashed black;
-                color: black;
-                font-size: 8pt;
-            }
-
-            .estado-pago {
-                margin: 10px 0;
-                padding: 7px 0;
-                border: 0;
-                border-top: 1px dashed black;
-                border-radius: 0;
-                background: white;
-            }
-
-            .estado-pago h3 {
-                font-size: 9pt;
-            }
-
-            .estado-etiqueta {
-                padding: 0;
-                background: white !important;
-                color: black !important;
-                font-size: 8pt;
-            }
-
-            .resumen-pago {
-                display: block;
-            }
-
-            .dato-pago {
-                display: flex;
-                justify-content: space-between;
-                padding: 3px 0;
-                border: 0;
-                border-radius: 0;
-                font-size: 8pt;
-            }
-
-            .dato-pago span {
-                margin: 0;
-                color: black;
-            }
-
-            .dato-pago strong {
-                font-size: 8pt;
-            }
-
-            .acciones-pago,
-            .form-abono,
-            .botones,
-            .no-imprimir {
-                display: none !important;
-            }
-
-            .estado-anulada {
-                padding: 5px;
-                margin-bottom: 8px;
-                border: 1px solid black;
-                color: black;
-                font-size: 9pt;
-            }
-        }
+        /* RESPONSIVE */
 
         @media screen and (max-width: 600px) {
             body {
@@ -541,6 +329,311 @@
             .resumen-pago {
                 grid-template-columns: 1fr;
             }
+
+            .botones {
+                flex-direction: column;
+            }
+
+            .botones .btn {
+                width: 100%;
+            }
+        }
+
+        /* CONFIGURACIÓN DE PÁGINAS */
+
+        @page normal {
+            size: A4;
+            margin: 12mm;
+        }
+
+        @page ticket {
+            size: 80mm auto;
+            margin: 2mm;
+        }
+
+        @media print {
+
+            html,
+            body {
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                color: black !important;
+                font-family: Arial, Helvetica, sans-serif;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            body.impresion-normal {
+                page: normal;
+                font-size: 10pt;
+            }
+
+            body.impresion-ticket {
+                page: ticket;
+                font-size: 7pt;
+            }
+
+            .factura {
+                margin: 0 !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                background: white !important;
+            }
+
+            /* FACTURA NORMAL */
+
+            body.impresion-normal .factura {
+                width: 100% !important;
+                max-width: none !important;
+                padding: 0 !important;
+            }
+
+            body.impresion-normal .encabezado {
+                display: flex;
+            }
+
+            body.impresion-normal .empresa h1 {
+                font-size: 25pt;
+            }
+
+            body.impresion-normal table {
+                table-layout: auto;
+            }
+
+            body.impresion-normal th,
+            body.impresion-normal td {
+                padding: 8px 6px;
+                font-size: 9pt;
+            }
+
+            body.impresion-normal .estado-pago {
+                padding: 12px;
+            }
+
+            /* TICKET TÉRMICO 80 MM */
+
+            body.impresion-ticket .factura {
+                width: 76mm !important;
+                max-width: 76mm !important;
+                padding: 0 !important;
+            }
+
+            body.impresion-ticket .encabezado {
+                display: block;
+                padding-bottom: 7px;
+                margin-bottom: 9px;
+                border-bottom: 1px dashed black;
+            }
+
+            body.impresion-ticket .empresa h1 {
+                margin-bottom: 3px;
+                font-size: 17pt;
+            }
+
+            body.impresion-ticket .empresa p,
+            body.impresion-ticket .numero-factura p {
+                margin: 2px 0;
+                color: black;
+                font-size: 8pt;
+            }
+
+            body.impresion-ticket .numero-factura {
+                margin-top: 6px;
+                text-align: left;
+            }
+
+            body.impresion-ticket .numero-factura h2 {
+                margin-bottom: 3px;
+                font-size: 11pt;
+            }
+
+            body.impresion-ticket .cliente {
+                padding: 6px 0;
+                margin-bottom: 9px;
+                background: transparent !important;
+                border-bottom: 1px dashed black;
+                border-radius: 0;
+            }
+
+            body.impresion-ticket .cliente h3,
+            body.impresion-ticket .productos-titulo {
+                margin-bottom: 5px;
+                font-size: 9pt;
+            }
+
+            body.impresion-ticket .cliente p {
+                margin: 3px 0;
+                font-size: 8pt;
+            }
+
+            body.impresion-ticket table {
+                width: 100% !important;
+                margin-top: 5px;
+                table-layout: fixed;
+                border-collapse: collapse;
+                font-size: 7pt;
+            }
+
+            body.impresion-ticket thead {
+                display: table-header-group;
+            }
+
+            body.impresion-ticket tr {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            body.impresion-ticket th {
+                padding: 4px 1px;
+                background: #eee !important;
+                color: black !important;
+                border-bottom: 1px solid black;
+                font-size: 7pt;
+                overflow-wrap: anywhere;
+            }
+
+            body.impresion-ticket td {
+                padding: 4px 1px;
+                border-bottom: 1px dotted #aaa;
+                font-size: 7pt;
+                overflow-wrap: anywhere;
+                white-space: normal;
+            }
+
+            body.impresion-ticket th:first-child,
+            body.impresion-ticket td:first-child {
+                width: 30%;
+                text-align: left;
+            }
+
+            body.impresion-ticket th:nth-child(2),
+            body.impresion-ticket td:nth-child(2) {
+                width: 10%;
+                text-align: center;
+            }
+
+            body.impresion-ticket th:nth-child(3),
+            body.impresion-ticket td:nth-child(3) {
+                width: 21%;
+            }
+
+            body.impresion-ticket th:nth-child(4),
+            body.impresion-ticket td:nth-child(4) {
+                width: 17%;
+            }
+
+            body.impresion-ticket th:nth-child(5),
+            body.impresion-ticket td:nth-child(5) {
+                width: 22%;
+            }
+
+            body.impresion-ticket .numerico {
+                text-align: right;
+                white-space: normal;
+                overflow-wrap: anywhere;
+            }
+
+            body.impresion-ticket .totales {
+                width: 100%;
+                max-width: none;
+                margin-top: 9px;
+            }
+
+            body.impresion-ticket .linea {
+                gap: 4px;
+                padding: 3px 0;
+                font-size: 8pt;
+            }
+
+            body.impresion-ticket .linea span,
+            body.impresion-ticket .linea strong {
+                overflow-wrap: anywhere;
+            }
+
+            body.impresion-ticket .total {
+                margin-top: 4px;
+                padding-top: 6px;
+                border-top: 1px solid black;
+                font-size: 12pt;
+            }
+
+            body.impresion-ticket .gracias {
+                margin-top: 12px;
+                padding-top: 7px;
+                border-top: 1px dashed black;
+                color: black;
+                font-size: 8pt;
+            }
+
+            body.impresion-ticket .estado-pago {
+                margin: 10px 0;
+                padding: 7px 0;
+                border: 0;
+                border-top: 1px dashed black;
+                border-radius: 0;
+                background: white;
+            }
+
+            body.impresion-ticket .estado-pago h3 {
+                font-size: 9pt;
+            }
+
+            body.impresion-ticket .estado-etiqueta {
+                padding: 0;
+                background: white !important;
+                color: black !important;
+                font-size: 8pt;
+            }
+
+            body.impresion-ticket .resumen-pago {
+                display: block;
+            }
+
+            body.impresion-ticket .dato-pago {
+                display: flex;
+                justify-content: space-between;
+                padding: 3px 0;
+                border: 0;
+                border-radius: 0;
+                font-size: 8pt;
+            }
+
+            body.impresion-ticket .dato-pago span {
+                margin: 0;
+                color: black;
+            }
+
+            body.impresion-ticket .dato-pago strong {
+                font-size: 8pt;
+            }
+
+            body.impresion-ticket .metodo-pago {
+                margin-top: 5px;
+                padding: 4px 0;
+                border: 0;
+                border-top: 1px dotted black;
+                border-radius: 0;
+                font-size: 8pt;
+            }
+
+            /* ELEMENTOS QUE NO SE IMPRIMEN */
+
+            .acciones-pago,
+            .form-abono,
+            .botones,
+            .no-imprimir {
+                display: none !important;
+            }
+
+            .estado-anulada {
+                padding: 5px;
+                margin-bottom: 8px;
+                border: 1px solid black;
+                color: black;
+                font-size: 9pt;
+            }
         }
     </style>
 </head>
@@ -549,7 +642,10 @@
 
 <div class="factura">
 
+    <!-- ENCABEZADO -->
+
     <header class="encabezado">
+
         <div class="empresa">
             <h1>FacturaPro</h1>
             <p>Gestión Comercial</p>
@@ -558,53 +654,81 @@
 
         <div class="numero-factura">
             <h2>{{ factura.numero }}</h2>
+
             <p>
                 Fecha:
                 {{ factura.fecha.strftime('%d/%m/%Y %H:%M') }}
             </p>
         </div>
+
     </header>
 
+    <!-- FACTURA ANULADA -->
+
     {% if factura.estado == 'anulada' %}
+
         <div class="estado-anulada">
             FACTURA ANULADA
+
             {% if factura.fecha_anulacion %}
                 <br>
                 Fecha de anulación:
                 {{ factura.fecha_anulacion.strftime('%d/%m/%Y %H:%M') }}
             {% endif %}
         </div>
+
     {% endif %}
 
+    <!-- DATOS DEL CLIENTE -->
+
     <section class="cliente">
+
         <h3>Datos del cliente</h3>
 
         {% if factura.cliente %}
+
             <p>
                 <strong>Nombre:</strong>
                 {{ factura.cliente.nombre }}
             </p>
 
             {% if factura.cliente.telefono %}
-                <p><strong>Teléfono:</strong> {{ factura.cliente.telefono }}</p>
+                <p>
+                    <strong>Teléfono:</strong>
+                    {{ factura.cliente.telefono }}
+                </p>
             {% endif %}
 
             {% if factura.cliente.correo %}
-                <p><strong>Correo:</strong> {{ factura.cliente.correo }}</p>
+                <p>
+                    <strong>Correo:</strong>
+                    {{ factura.cliente.correo }}
+                </p>
             {% endif %}
 
             {% if factura.cliente.direccion %}
-                <p><strong>Dirección:</strong> {{ factura.cliente.direccion }}</p>
+                <p>
+                    <strong>Dirección:</strong>
+                    {{ factura.cliente.direccion }}
+                </p>
             {% endif %}
+
         {% else %}
+
             <p>Cliente general</p>
+
         {% endif %}
+
     </section>
 
+    <!-- PRODUCTOS -->
+
     <section>
+
         <h3 class="productos-titulo">Productos</h3>
 
         <table>
+
             <thead>
                 <tr>
                     <th>Producto</th>
@@ -616,59 +740,100 @@
             </thead>
 
             <tbody>
+
                 {% for detalle in factura.detalles %}
+
                     <tr>
-                        <td>{{ detalle.producto.nombre }}</td>
+
+                        <td>
+                            {{ detalle.producto.nombre if detalle.producto else 'Producto eliminado' }}
+                        </td>
+
                         <td>{{ detalle.cantidad }}</td>
+
                         <td class="numerico">
                             RD$ {{ "%.2f"|format(detalle.precio_unitario|float) }}
                         </td>
+
                         <td class="numerico">
                             RD$ {{ "%.2f"|format(detalle.itbis|float) }}
                         </td>
+
                         <td class="numerico">
                             RD$ {{ "%.2f"|format(detalle.total|float) }}
                         </td>
+
                     </tr>
+
                 {% endfor %}
+
             </tbody>
+
         </table>
+
     </section>
 
+    <!-- TOTALES -->
+
     <section class="totales">
+
         <div class="linea">
             <span>Subtotal:</span>
-            <strong>RD$ {{ "%.2f"|format(factura.subtotal|float) }}</strong>
+
+            <strong>
+                RD$ {{ "%.2f"|format(factura.subtotal|float) }}
+            </strong>
         </div>
 
         <div class="linea">
             <span>ITBIS:</span>
-            <strong>RD$ {{ "%.2f"|format(factura.itbis|float) }}</strong>
+
+            <strong>
+                RD$ {{ "%.2f"|format(factura.itbis|float) }}
+            </strong>
         </div>
 
         <div class="linea total">
             <span>TOTAL:</span>
-            <strong>RD$ {{ "%.2f"|format(factura.total|float) }}</strong>
+
+            <strong>
+                RD$ {{ "%.2f"|format(factura.total|float) }}
+            </strong>
         </div>
+
     </section>
 
     <!-- CONTROL DE PAGOS -->
+
     <section class="estado-pago">
 
         <h3>Control de pagos</h3>
 
         {% if factura.estado_pago == 'pagada' %}
-            <span class="estado-etiqueta pagada">PAGADA</span>
+
+            <span class="estado-etiqueta pagada">
+                PAGADA
+            </span>
+
         {% elif factura.estado_pago == 'parcial' %}
-            <span class="estado-etiqueta parcial">PAGO PARCIAL</span>
+
+            <span class="estado-etiqueta parcial">
+                PAGO PARCIAL
+            </span>
+
         {% else %}
-            <span class="estado-etiqueta pendiente">PENDIENTE DE PAGO</span>
+
+            <span class="estado-etiqueta pendiente">
+                PENDIENTE DE PAGO
+            </span>
+
         {% endif %}
 
         <div class="resumen-pago">
 
             <div class="dato-pago">
                 <span>Total de factura</span>
+
                 <strong>
                     RD$ {{ "%.2f"|format(factura.total|float) }}
                 </strong>
@@ -676,6 +841,7 @@
 
             <div class="dato-pago">
                 <span>Dinero recibido</span>
+
                 <strong>
                     RD$ {{ "%.2f"|format((factura.monto_pagado or 0)|float) }}
                 </strong>
@@ -683,6 +849,7 @@
 
             <div class="dato-pago">
                 <span>Saldo pendiente</span>
+
                 <strong>
                     RD$ {{ "%.2f"|format((factura.saldo_pendiente or 0)|float) }}
                 </strong>
@@ -690,16 +857,26 @@
 
         </div>
 
+        <div class="metodo-pago">
+            <strong>Método de pago:</strong>
+
+            {{ factura.metodo_pago or 'No especificado' }}
+        </div>
+
+        <!-- ACCIONES DE PAGO -->
+
         {% if factura.estado != 'anulada' and factura.estado_pago != 'pagada' %}
 
             <div class="acciones-pago no-imprimir">
 
                 <!-- REGISTRAR ABONO -->
+
                 <form
                     class="form-abono"
                     method="POST"
-                  action="{{ url_for('registrar_pago', id=factura.id) }}"
+                    action="{{ url_for('registrar_pago', id=factura.id) }}"
                 >
+
                     <input
                         type="number"
                         name="monto"
@@ -710,20 +887,31 @@
                         required
                     >
 
+                    <select name="metodo_pago" required>
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="Transferencia">Transferencia</option>
+                        <option value="Tarjeta">Tarjeta</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+
                     <button type="submit" class="btn btn-abono">
                         Registrar abono
                     </button>
+
                 </form>
 
-                <!-- MARCAR FACTURA COMO PAGADA -->
+                <!-- MARCAR COMO PAGADA -->
+
                 <form
                     method="POST"
                     action="{{ url_for('marcar_pagada', id=factura.id) }}"
                     onsubmit="return confirm('¿Confirmas que esta factura fue pagada completamente?');"
                 >
+
                     <button type="submit" class="btn btn-pagada">
                         Marcar como pagada
                     </button>
+
                 </form>
 
             </div>
@@ -732,18 +920,30 @@
 
     </section>
 
-    <p class="gracias">¡Gracias por su compra!</p>
+    <p class="gracias">
+        ¡Gracias por su compra!
+    </p>
 
 </div>
+
+<!-- BOTONES DE IMPRESIÓN -->
 
 <div class="botones no-imprimir">
 
     <button
         type="button"
         class="btn btn-imprimir"
-        onclick="window.print()"
+        onclick="imprimirFactura('normal')"
     >
-        Imprimir factura
+        🖨️ Imprimir factura normal
+    </button>
+
+    <button
+        type="button"
+        class="btn btn-ticket"
+        onclick="imprimirFactura('ticket')"
+    >
+        🧾 Imprimir ticket 80 mm
     </button>
 
     <a href="{{ url_for('inicio') }}" class="btn btn-panel">
@@ -752,16 +952,71 @@
 
 </div>
 
+<p class="nota-impresion no-imprimir">
+    Para el ticket térmico, selecciona papel de 80 mm en las opciones de tu impresora.
+</p>
+
 <script>
+
+// ============================================================
+// SELECCIONAR FORMATO DE IMPRESIÓN
+// ============================================================
+
+function imprimirFactura(formato) {
+
+    document.body.classList.remove(
+        "impresion-normal",
+        "impresion-ticket"
+    );
+
+    if (formato === "ticket") {
+
+        document.body.classList.add("impresion-ticket");
+
+    } else {
+
+        document.body.classList.add("impresion-normal");
+
+    }
+
+    window.print();
+}
+
+// ============================================================
+// RESTAURAR PÁGINA DESPUÉS DE IMPRIMIR
+// ============================================================
+
+window.addEventListener("afterprint", function() {
+
+    document.body.classList.remove(
+        "impresion-normal",
+        "impresion-ticket"
+    );
+
+});
+
+// ============================================================
+// IMPRESIÓN AUTOMÁTICA DESPUÉS DE GUARDAR
+// ============================================================
+
+window.addEventListener("load", function() {
+
     const parametros = new URLSearchParams(window.location.search);
 
     if (parametros.get("imprimir") === "1") {
-        window.addEventListener("load", function () {
-            setTimeout(function () {
-                window.print();
-            }, 700);
-        });
+
+        const formato = parametros.get("tamano");
+
+        const tipo = formato === "pequeno" ? "ticket" : "normal";
+
+        setTimeout(function() {
+            imprimirFactura(tipo);
+        }, 700);
+
     }
+
+});
+
 </script>
 
 </body>
