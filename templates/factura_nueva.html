@@ -35,8 +35,6 @@
             min-height: 100vh;
         }
 
-        /* ENCABEZADO */
-
         .header {
             background: linear-gradient(110deg, #32145B, #6D28D9);
             color: white;
@@ -75,15 +73,11 @@
             color: var(--morado-oscuro);
         }
 
-        /* CONTENEDOR */
-
         .container {
             max-width: 1200px;
             margin: 30px auto;
             padding: 0 22px;
         }
-
-        /* INFORMACIÓN DE FACTURA */
 
         .factura-info {
             background: white;
@@ -118,8 +112,6 @@
             font-weight: bold;
             border: 1px solid var(--morado-borde);
         }
-
-        /* TARJETAS */
 
         .card {
             background: white;
@@ -161,8 +153,6 @@
             color: var(--gris);
         }
 
-        /* CAMPOS */
-
         label {
             display: block;
             font-weight: bold;
@@ -175,7 +165,7 @@
             margin-bottom: 17px;
         }
 
-        input {
+        input, select {
             width: 100%;
             padding: 13px 14px;
             border: 1px solid var(--morado-borde);
@@ -187,7 +177,7 @@
             transition: 0.2s;
         }
 
-        input:focus {
+        input:focus, select:focus {
             border-color: var(--morado-principal);
             box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
         }
@@ -195,8 +185,6 @@
         input::placeholder {
             color: #A49AAE;
         }
-
-        /* BUSCADORES */
 
         .busqueda {
             position: relative;
@@ -263,8 +251,6 @@
             font-size: 13px;
         }
 
-        /* PRODUCTOS */
-
         .producto-grid {
             display: grid;
             grid-template-columns: minmax(0, 1fr) 150px;
@@ -308,8 +294,6 @@
             color: white;
         }
 
-        /* TABLA */
-
         .tabla-contenedor {
             overflow-x: auto;
             border-radius: 10px;
@@ -352,8 +336,6 @@
             text-align: center;
         }
 
-        /* TOTALES */
-
         .totales {
             margin-top: 22px;
             margin-left: auto;
@@ -391,8 +373,6 @@
             font-size: 23px;
         }
 
-        /* GUARDAR */
-
         .guardar-card {
             background: linear-gradient(110deg, #32145B, #6D28D9);
             color: white;
@@ -429,8 +409,6 @@
             transform: translateY(-1px);
         }
 
-        /* MENSAJES */
-
         .mensaje {
             padding: 14px 16px;
             border-radius: 9px;
@@ -450,7 +428,111 @@
             border: 1px solid #BBF7D0;
         }
 
-        /* RESPONSIVE */
+        /* VENTANA DE PAGO */
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(24, 12, 40, 0.72);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            z-index: 5000;
+        }
+
+        .modal.activo {
+            display: flex;
+        }
+
+        .modal-contenido {
+            background: white;
+            width: 100%;
+            max-width: 490px;
+            padding: 27px;
+            border-radius: 16px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+
+        .modal-titulo {
+            color: var(--morado-oscuro);
+            font-size: 22px;
+            margin-bottom: 7px;
+        }
+
+        .modal-descripcion {
+            color: var(--gris);
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .pago-total {
+            background: var(--morado-suave);
+            border: 1px solid var(--morado-borde);
+            padding: 17px;
+            border-radius: 11px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .pago-total span {
+            display: block;
+            color: var(--gris);
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .pago-total strong {
+            color: var(--morado);
+            font-size: 30px;
+        }
+
+        .modal-botones {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-confirmar {
+            background: var(--morado-principal);
+            color: white;
+            padding: 14px;
+        }
+
+        .btn-confirmar:hover {
+            background: var(--morado-oscuro);
+        }
+
+        .btn-pendiente {
+            background: #FFF7ED;
+            color: #9A3412;
+            border: 1px solid #FED7AA;
+            padding: 13px;
+        }
+
+        .btn-pendiente:hover {
+            background: #FFEDD5;
+        }
+
+        .btn-cancelar {
+            background: #F3F0F6;
+            color: var(--gris);
+            padding: 12px;
+        }
+
+        .btn-cancelar:hover {
+            background: #E9E3EF;
+        }
+
+        .nota-pago {
+            font-size: 12px;
+            color: var(--gris);
+            line-height: 1.5;
+            margin-top: 7px;
+        }
 
         @media (max-width: 650px) {
             .header {
@@ -493,9 +575,11 @@
             .btn-imprimir {
                 width: 100%;
             }
-        }
 
-        /* IMPRESIÓN */
+            .modal-contenido {
+                padding: 21px;
+            }
+        }
 
         @media print {
             body {
@@ -505,7 +589,8 @@
             .header,
             .volver,
             .btn,
-            .formulario-impresion,
+            .modal,
+            .guardar-card,
             .factura-info {
                 display: none !important;
             }
@@ -520,10 +605,6 @@
                 box-shadow: none;
                 border: 1px solid #ddd;
                 break-inside: avoid;
-            }
-
-            .guardar-card {
-                display: none !important;
             }
         }
     </style>
@@ -553,8 +634,6 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-
-    <!-- INFORMACIÓN DE FACTURA -->
 
     <section class="factura-info">
         <div>
@@ -601,7 +680,7 @@
         </div>
     </section>
 
-    <!-- PRODUCTO -->
+    <!-- PRODUCTOS -->
 
     <section class="card">
         <div class="card-header">
@@ -631,6 +710,7 @@
             <strong>Producto seleccionado:</strong>
             <div id="nombreProductoSeleccionado"></div>
             <div id="precioProductoSeleccionado"></div>
+            <div id="itbisProductoSeleccionado"></div>
             <div id="stockProducto" class="stock"></div>
         </div>
 
@@ -658,7 +738,7 @@
         </div>
     </section>
 
-    <!-- DETALLE DE FACTURA -->
+    <!-- DETALLE -->
 
     <section class="card">
         <div class="card-header">
@@ -699,7 +779,7 @@
             </div>
 
             <div class="total-linea">
-                <span>ITBIS (18%):</span>
+                <span>ITBIS:</span>
                 <strong id="itbis">$0.00</strong>
             </div>
 
@@ -710,24 +790,22 @@
         </div>
     </section>
 
-    <!-- GUARDAR FACTURA -->
+    <!-- FORMULARIO -->
 
     <form
+        id="facturaForm"
         method="POST"
         action="{{ url_for('guardar_factura') }}"
-        onsubmit="return prepararFactura()"
+        onsubmit="return prepararFactura(event)"
     >
-        <input
-            type="hidden"
-            name="cliente_id"
-            id="cliente_id_form"
-        >
+        <input type="hidden" name="cliente_id" id="cliente_id_form">
+        <input type="hidden" name="items" id="items">
 
-        <input
-            type="hidden"
-            name="items"
-            id="items"
-        >
+        <!-- Datos del pago -->
+
+        <input type="hidden" name="monto_recibido" id="monto_recibido">
+        <input type="hidden" name="metodo_pago" id="metodo_pago">
+        <input type="hidden" name="tamano_impresion" id="tamano_impresion">
 
         <div class="guardar-card">
             <div>
@@ -736,12 +814,89 @@
             </div>
 
             <button type="submit" class="btn btn-imprimir">
-                🖨️ Guardar e imprimir factura
+                🧾 Guardar y registrar pago
             </button>
         </div>
     </form>
 
 </main>
+
+<!-- VENTANA DE PAGO -->
+
+<div class="modal" id="modalPago">
+    <div class="modal-contenido">
+
+        <h2 class="modal-titulo">💳 Registrar pago</h2>
+
+        <p class="modal-descripcion">
+            Confirma cuánto dinero recibiste por esta factura.
+        </p>
+
+        <div class="pago-total">
+            <span>Total de la factura</span>
+            <strong id="totalModal">$0.00</strong>
+        </div>
+
+        <div class="campo">
+            <label for="montoRecibidoModal">Dinero recibido</label>
+            <input
+                type="number"
+                id="montoRecibidoModal"
+                min="0"
+                step="0.01"
+                placeholder="Ejemplo: 1500.00"
+            >
+            <p class="nota-pago">
+                Puedes registrar el pago completo o solamente una parte.
+            </p>
+        </div>
+
+        <div class="campo">
+            <label for="metodoPagoModal">Método de pago</label>
+            <select id="metodoPagoModal">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Transferencia">Transferencia</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Otro">Otro</option>
+            </select>
+        </div>
+
+        <div class="campo">
+            <label for="tamanoImpresionModal">Formato de impresión</label>
+            <select id="tamanoImpresionModal">
+                <option value="normal">Factura normal</option>
+                <option value="pequeno">Ticket térmico de 80 mm</option>
+            </select>
+        </div>
+
+        <div class="modal-botones">
+            <button
+                type="button"
+                class="btn btn-confirmar"
+                onclick="confirmarPago()"
+            >
+                ✓ Confirmar y guardar factura
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-pendiente"
+                onclick="guardarPendiente()"
+            >
+                Dejar pendiente de pago
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-cancelar"
+                onclick="cerrarModal()"
+            >
+                Cancelar
+            </button>
+        </div>
+
+    </div>
+</div>
 
 <script>
 
@@ -772,13 +927,22 @@ const productos = [
         id: {{ producto.id }},
         nombre: {{ producto.nombre|tojson }},
         precio: {{ producto.precio|float }},
-        stock: {{ producto.stock|int }}
+        stock: {{ producto.stock|int }},
+        itbis: {{ (producto.itbis or 0)|float }}
     },
     {% endfor %}
 ];
 
 let productoSeleccionado = null;
 let facturaProductos = [];
+
+// ============================================================
+// FORMATO DE DINERO
+// ============================================================
+
+function dinero(valor) {
+    return "$" + Number(valor).toFixed(2);
+}
 
 // ============================================================
 // BUSCAR CLIENTE
@@ -865,7 +1029,6 @@ buscarProducto.addEventListener("input", function() {
     const texto = this.value.trim().toLowerCase();
 
     resultadosProductos.innerHTML = "";
-
     productoSeleccionado = null;
 
     document.getElementById("productoSeleccionado").style.display = "none";
@@ -894,7 +1057,9 @@ buscarProducto.addEventListener("input", function() {
         div.innerHTML = `
             <strong>${escapeHtml(producto.nombre)}</strong>
             <small>
-                💰 $${producto.precio.toFixed(2)}
+                💰 ${dinero(producto.precio)}
+                &nbsp; | &nbsp;
+                ITBIS: ${producto.itbis}%
                 &nbsp; | &nbsp;
                 📦 Stock: ${producto.stock}
             </small>
@@ -918,20 +1083,21 @@ function seleccionarProducto(producto) {
     productoSeleccionado = producto;
 
     buscarProducto.value = producto.nombre;
-
     resultadosProductos.style.display = "none";
 
     document.getElementById("nombreProductoSeleccionado").textContent =
         producto.nombre;
 
     document.getElementById("precioProductoSeleccionado").textContent =
-        "Precio: $" + producto.precio.toFixed(2);
+        "Precio: " + dinero(producto.precio);
+
+    document.getElementById("itbisProductoSeleccionado").textContent =
+        "ITBIS: " + producto.itbis + "%";
 
     document.getElementById("stockProducto").textContent =
         "Stock disponible: " + producto.stock;
 
     document.getElementById("productoSeleccionado").style.display = "block";
-
     document.getElementById("cantidad").value = 1;
 }
 
@@ -975,13 +1141,15 @@ function agregarProducto() {
         }
 
         existente.cantidad = nuevaCantidad;
+
     } else {
         facturaProductos.push({
             producto_id: productoSeleccionado.id,
             nombre: productoSeleccionado.nombre,
             precio: productoSeleccionado.precio,
             cantidad: cantidad,
-            stock: productoSeleccionado.stock
+            stock: productoSeleccionado.stock,
+            itbis: productoSeleccionado.itbis
         });
     }
 
@@ -1018,7 +1186,7 @@ function actualizarTabla() {
 
     facturaProductos.forEach((item, index) => {
         const subtotal = item.precio * item.cantidad;
-        const itbis = subtotal * 0.18;
+        const itbis = subtotal * (item.itbis / 100);
         const total = subtotal + itbis;
 
         const fila = document.createElement("tr");
@@ -1026,9 +1194,9 @@ function actualizarTabla() {
         fila.innerHTML = `
             <td>${escapeHtml(item.nombre)}</td>
             <td>${item.cantidad}</td>
-            <td>$${item.precio.toFixed(2)}</td>
-            <td>$${itbis.toFixed(2)}</td>
-            <td><strong>$${total.toFixed(2)}</strong></td>
+            <td>${dinero(item.precio)}</td>
+            <td>${dinero(itbis)} (${item.itbis}%)</td>
+            <td><strong>${dinero(total)}</strong></td>
             <td>
                 <button
                     type="button"
@@ -1057,34 +1225,47 @@ function eliminarProducto(index) {
 }
 
 // ============================================================
-// TOTALES
+// CALCULAR TOTALES
 // ============================================================
 
-function actualizarTotales() {
+function calcularTotales() {
     let subtotal = 0;
+    let itbis = 0;
 
     facturaProductos.forEach(item => {
-        subtotal += item.precio * item.cantidad;
+        const importe = item.precio * item.cantidad;
+
+        subtotal += importe;
+        itbis += importe * (item.itbis / 100);
     });
 
-    const itbis = subtotal * 0.18;
-    const total = subtotal + itbis;
+    return {
+        subtotal: subtotal,
+        itbis: itbis,
+        total: subtotal + itbis
+    };
+}
+
+function actualizarTotales() {
+    const totales = calcularTotales();
 
     document.getElementById("subtotal").textContent =
-        "$" + subtotal.toFixed(2);
+        dinero(totales.subtotal);
 
     document.getElementById("itbis").textContent =
-        "$" + itbis.toFixed(2);
+        dinero(totales.itbis);
 
     document.getElementById("total").textContent =
-        "$" + total.toFixed(2);
+        dinero(totales.total);
 }
 
 // ============================================================
-// PREPARAR FACTURA
+// PREPARAR FACTURA Y ABRIR VENTANA DE PAGO
 // ============================================================
 
-function prepararFactura() {
+function prepararFactura(event) {
+    event.preventDefault();
+
     if (!clienteSeleccionado) {
         alert("Debes seleccionar un cliente.");
         return false;
@@ -1106,11 +1287,93 @@ function prepararFactura() {
     document.getElementById("items").value =
         JSON.stringify(itemsEnviar);
 
-    return true;
+    const totales = calcularTotales();
+
+    document.getElementById("totalModal").textContent =
+        dinero(totales.total);
+
+    document.getElementById("montoRecibidoModal").value =
+        totales.total.toFixed(2);
+
+    document.getElementById("montoRecibidoModal").max =
+        totales.total.toFixed(2);
+
+    document.getElementById("modalPago").classList.add("activo");
+
+    return false;
 }
 
 // ============================================================
-// CERRAR RESULTADOS
+// CONFIRMAR PAGO
+// ============================================================
+
+function confirmarPago() {
+    const totales = calcularTotales();
+
+    const monto = Number(
+        document.getElementById("montoRecibidoModal").value
+    );
+
+    const metodo = document.getElementById("metodoPagoModal").value;
+    const impresion = document.getElementById("tamanoImpresionModal").value;
+
+    if (!Number.isFinite(monto) || monto < 0) {
+        alert("Introduce un monto válido.");
+        return;
+    }
+
+    if (monto > totales.total + 0.001) {
+        alert("El dinero recibido no puede ser mayor que el total de la factura.");
+        return;
+    }
+
+    document.getElementById("monto_recibido").value =
+        monto.toFixed(2);
+
+    document.getElementById("metodo_pago").value = metodo;
+
+    document.getElementById("tamano_impresion").value = impresion;
+
+    enviarFactura();
+}
+
+// ============================================================
+// DEJAR FACTURA PENDIENTE
+// ============================================================
+
+function guardarPendiente() {
+    const impresion = document.getElementById("tamanoImpresionModal").value;
+
+    document.getElementById("monto_recibido").value = "0";
+    document.getElementById("metodo_pago").value = "Otro";
+    document.getElementById("tamano_impresion").value = impresion;
+
+    enviarFactura();
+}
+
+// ============================================================
+// ENVIAR FACTURA
+// ============================================================
+
+function enviarFactura() {
+    document.getElementById("modalPago").classList.remove("activo");
+
+    const formulario = document.getElementById("facturaForm");
+
+    formulario.onsubmit = null;
+    formulario.submit();
+}
+
+// ============================================================
+// CERRAR VENTANA
+// ============================================================
+
+function cerrarModal() {
+    document.getElementById("modalPago").classList.remove("activo");
+}
+
+// ============================================================
+// CERRAR RESULTADOS DE BÚSQUEDA
 // ============================================================
 
 document.addEventListener("click", function(event) {
