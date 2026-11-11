@@ -76,6 +76,14 @@ def actualizar_estado_pago(factura):
         factura.estado_pago = "pendiente"
 
 
+METODOS_PAGO = [
+    "Efectivo",
+    "Transferencia",
+    "Tarjeta",
+    "Otro"
+]
+
+
 # ============================================================
 # MODELO CLIENTE
 # ============================================================
@@ -138,7 +146,6 @@ class Factura(db.Model):
     itbis = db.Column(db.Numeric(10, 2), default=0)
     total = db.Column(db.Numeric(10, 2), default=0)
 
-    # Estado administrativo de la factura
     estado = db.Column(
         db.String(20),
         nullable=False,
@@ -148,7 +155,6 @@ class Factura(db.Model):
 
     fecha_anulacion = db.Column(db.DateTime, nullable=True)
 
-    # NUEVO: CONTROL DE PAGOS
     estado_pago = db.Column(
         db.String(20),
         nullable=False,
@@ -161,6 +167,14 @@ class Factura(db.Model):
         nullable=False,
         default=0,
         server_default="0"
+    )
+
+    # MÉTODO DE PAGO
+    metodo_pago = db.Column(
+        db.String(30),
+        nullable=False,
+        default="Pendiente de pago",
+        server_default="Pendiente de pago"
     )
 
     cliente = db.relationship("Cliente", backref="facturas")
@@ -399,7 +413,6 @@ def inicio():
             Factura.fecha >= inicio_mes
         ).count()
 
-        # Cobros reales del mes.
         cobros_mes = db.session.query(
             db.func.coalesce(
                 db.func.sum(Factura.monto_pagado), 0
@@ -409,7 +422,6 @@ def inicio():
             Factura.estado != "anulada"
         ).scalar()
 
-        # Cuentas pendientes de cobro.
         saldo_pendiente = db.session.query(
             db.func.coalesce(
                 db.func.sum(
@@ -441,7 +453,6 @@ def inicio():
             Producto.stock.asc()
         ).all()
 
-        # Gráfica de ventas de los últimos siete días.
         ventas_labels = []
         ventas_datos = []
 
@@ -474,29 +485,22 @@ def inicio():
 
         return render_template(
             "index.html",
-
             total_productos=total_productos,
             total_clientes=total_clientes,
             total_facturas=total_facturas,
-
             ventas_mes=ventas_mes,
             ventas_totales=ventas_totales,
             facturas_mes=facturas_mes,
-
             cobros_mes=cobros_mes,
             saldo_pendiente=saldo_pendiente,
-
             facturas_pendientes=facturas_pendientes,
             facturas_parciales=facturas_parciales,
             facturas_pagadas=facturas_pagadas,
-
             productos_bajo_stock=productos_bajo_stock,
-
             ventas_labels=ventas_labels,
             ventas_datos=ventas_datos,
             ventas_labels_json=json.dumps(ventas_labels),
             ventas_datos_json=json.dumps(ventas_datos),
-
             ultimas_facturas=ultimas_facturas
         )
 
@@ -519,10 +523,7 @@ def productos():
         Producto.id.desc()
     ).all()
 
-    return render_template(
-        "productos.html",
-        productos=lista
-    )
+    return render_template("productos.html", productos=lista)
 
 
 @app.route("/productos/agregar", methods=["POST"])
@@ -560,9 +561,7 @@ def agregar_producto():
             rounding=ROUND_HALF_UP
         )
 
-        existente = Producto.query.filter_by(
-            codigo=codigo
-        ).first()
+        existente = Producto.query.filter_by(codigo=codigo).first()
 
         if existente:
 
@@ -636,7 +635,6 @@ def eliminar_producto(id):
 def clientes():
 
     buscar = request.args.get("buscar", "").strip()
-
     consulta = Cliente.query.filter_by(activo=True)
 
     if buscar:
@@ -644,9 +642,7 @@ def clientes():
             Cliente.nombre.ilike(f"%{buscar}%")
         )
 
-    lista = consulta.order_by(
-        Cliente.id.desc()
-    ).all()
+    lista = consulta.order_by(Cliente.id.desc()).all()
 
     return render_template(
         "clientes.html",
@@ -719,16 +715,12 @@ def nueva_factura():
 
     clientes_lista = Cliente.query.filter_by(
         activo=True
-    ).order_by(
-        Cliente.nombre.asc()
-    ).all()
+    ).order_by(Cliente.nombre.asc()).all()
 
     productos_lista = Producto.query.filter(
         Producto.activo.is_(True),
         Producto.stock > 0
-    ).order_by(
-        Producto.nombre.asc()
-    ).all()
+    ).order_by(Producto.nombre.asc()).all()
 
     return render_template(
         "factura_nueva.html",
@@ -738,7 +730,7 @@ def nueva_factura():
 
 
 # ============================================================
-# GUARDAR FACTURA
+# GUARDAR FACTURA CON PAGO INICIAL
 # ============================================================
 
 @app.route("/factura/guardar", methods=["POST"])
@@ -762,7 +754,6 @@ def guardar_factura():
         cantidades = {}
 
         for item in items:
-
             producto_id = int(item["producto_id"])
             cantidad = int(item["cantidad"])
 
@@ -801,7 +792,6 @@ def guardar_factura():
         for producto_id, cantidad in cantidades.items():
 
             producto = productos[producto_id]
-
             precio = dinero(producto.precio)
 
             tasa = (
@@ -826,6 +816,40 @@ def guardar_factura():
                 "total": total
             })
 
+        total_general = dinero(total_general)
+
+        # Datos del pago inicial enviados desde el modal.
+        monto_texto = request.form.get(
+            "monto_recibido", "0"
+        ).strip() or "0"
+
+        monto_pagado = dinero(Decimal(monto_texto))
+
+        metodo_pago = request.form.get(
+            "metodo_pago", "Pendiente de pago"
+        ).strip()
+
+        tamano_impresion = request.form.get(
+            "tamano_impresion", "normal"
+        ).strip().lower()
+
+        if tamano_impresion not in ("normal", "pequeno"):
+            tamano_impresion = "normal"
+
+        if not monto_pagado.is_finite() or monto_pagado < 0:
+            raise ValueError("El monto recibido no es válido.")
+
+        if monto_pagado > total_general:
+            raise ValueError(
+                "El monto recibido no puede superar el total."
+            )
+
+        if monto_pagado > 0:
+            if metodo_pago not in METODOS_PAGO:
+                raise ValueError("Selecciona un método de pago.")
+        else:
+            metodo_pago = "Pendiente de pago"
+
         ultima = Factura.query.order_by(
             Factura.id.desc()
         ).first()
@@ -833,17 +857,23 @@ def guardar_factura():
         numero_siguiente = ultima.id + 1 if ultima else 1
         numero = f"FAC-{numero_siguiente:06d}"
 
+        if monto_pagado >= total_general:
+            estado_pago = "pagada"
+        elif monto_pagado > 0:
+            estado_pago = "parcial"
+        else:
+            estado_pago = "pendiente"
+
         factura = Factura(
             numero=numero,
             cliente_id=int(cliente_id) if cliente_id else None,
             subtotal=dinero(subtotal_general),
             itbis=dinero(itbis_general),
-            total=dinero(total_general),
+            total=total_general,
             estado="activa",
-
-            # TODA FACTURA NUEVA COMIENZA PENDIENTE.
-            estado_pago="pendiente",
-            monto_pagado=Decimal("0.00")
+            estado_pago=estado_pago,
+            monto_pagado=monto_pagado,
+            metodo_pago=metodo_pago
         )
 
         db.session.add(factura)
@@ -871,7 +901,12 @@ def guardar_factura():
         flash("Factura creada correctamente.", "success")
 
         return redirect(
-            url_for("ver_factura", id=factura.id, imprimir=1)
+            url_for(
+                "ver_factura",
+                id=factura.id,
+                imprimir=1,
+                tamano=tamano_impresion
+            )
         )
 
     except (
@@ -903,10 +938,7 @@ def facturas():
         Factura.id.desc()
     ).all()
 
-    return render_template(
-        "facturas.html",
-        facturas=lista
-    )
+    return render_template("facturas.html", facturas=lista)
 
 
 # ============================================================
@@ -928,7 +960,10 @@ def registrar_pago(id):
             return redirect(url_for("facturas"))
 
         if factura.estado == "anulada":
-            flash("No puedes registrar pagos en una factura anulada.", "error")
+            flash(
+                "No puedes registrar pagos en una factura anulada.",
+                "error"
+            )
             return redirect(url_for("ver_factura", id=id))
 
         monto_texto = request.form.get("monto", "").strip()
@@ -942,7 +977,6 @@ def registrar_pago(id):
             raise ValueError("El pago debe ser mayor que cero.")
 
         monto = dinero(monto)
-
         saldo = factura.saldo_pendiente
 
         if monto > saldo:
@@ -950,9 +984,18 @@ def registrar_pago(id):
                 f"El pago supera el saldo pendiente de RD$ {saldo:.2f}."
             )
 
-        factura.monto_pagado = dinero(
-            factura.monto_pagado
-        ) + monto
+        metodo_pago = request.form.get(
+            "metodo_pago", "Otro"
+        ).strip()
+
+        if metodo_pago not in METODOS_PAGO:
+            raise ValueError("Selecciona un método de pago válido.")
+
+        factura.monto_pagado = (
+            dinero(factura.monto_pagado) + monto
+        )
+
+        factura.metodo_pago = metodo_pago
 
         actualizar_estado_pago(factura)
 
@@ -971,12 +1014,10 @@ def registrar_pago(id):
             )
 
     except (ValueError, InvalidOperation) as error:
-
         db.session.rollback()
         flash(str(error), "error")
 
     except Exception:
-
         db.session.rollback()
         app.logger.exception("Error al registrar pago")
         flash("No se pudo registrar el pago.", "error")
@@ -1007,6 +1048,11 @@ def marcar_pagada(id):
         else:
             factura.monto_pagado = dinero(factura.total)
             factura.estado_pago = "pagada"
+
+            if not factura.metodo_pago or (
+                factura.metodo_pago == "Pendiente de pago"
+            ):
+                factura.metodo_pago = "Otro"
 
             db.session.commit()
 
@@ -1043,7 +1089,6 @@ def anular_factura(id):
             return redirect(url_for("facturas"))
 
         for detalle in factura.detalles:
-
             producto = detalle.producto
 
             if producto:
@@ -1063,7 +1108,6 @@ def anular_factura(id):
         )
 
     except Exception:
-
         db.session.rollback()
         app.logger.exception("Error al anular factura")
         flash("No se pudo anular la factura.", "error")
@@ -1096,7 +1140,6 @@ def reactivar_factura(id):
         cantidades = {}
 
         for detalle in factura.detalles:
-
             cantidades[detalle.producto_id] = (
                 cantidades.get(detalle.producto_id, 0)
                 + detalle.cantidad
@@ -1135,12 +1178,10 @@ def reactivar_factura(id):
         flash("Factura reactivada correctamente.", "success")
 
     except ValueError as error:
-
         db.session.rollback()
         flash(str(error), "error")
 
     except Exception:
-
         db.session.rollback()
         app.logger.exception("Error al reactivar factura")
         flash("No se pudo reactivar la factura.", "error")
@@ -1163,7 +1204,9 @@ def ver_factura(id):
 
     return render_template(
         "factura_ver.html",
-        factura=factura
+        factura=factura,
+        tamano=request.args.get("tamano", "normal"),
+        imprimir=request.args.get("imprimir", "0")
     )
 
 
@@ -1283,8 +1326,6 @@ with app.app_context():
             TIMESTAMP NULL
         """)
 
-        # NUEVAS COLUMNAS PARA CONTROL DE PAGOS
-
         conexion.exec_driver_sql("""
             ALTER TABLE facturas
             ADD COLUMN IF NOT EXISTS estado_pago
@@ -1297,8 +1338,11 @@ with app.app_context():
             NUMERIC(10, 2) NOT NULL DEFAULT 0
         """)
 
-        # Normalizar registros antiguos sin modificar
-        # sus importes ni marcar pagos que no conocemos.
+        conexion.exec_driver_sql("""
+            ALTER TABLE facturas
+            ADD COLUMN IF NOT EXISTS metodo_pago
+            VARCHAR(30) NOT NULL DEFAULT 'Pendiente de pago'
+        """)
 
         conexion.exec_driver_sql("""
             UPDATE facturas
@@ -1311,6 +1355,12 @@ with app.app_context():
             UPDATE facturas
             SET monto_pagado = 0
             WHERE monto_pagado IS NULL
+        """)
+
+        conexion.exec_driver_sql("""
+            UPDATE facturas
+            SET metodo_pago = 'Pendiente de pago'
+            WHERE metodo_pago IS NULL
         """)
 
 
